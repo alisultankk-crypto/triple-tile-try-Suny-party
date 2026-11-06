@@ -53,14 +53,14 @@ export const BrowserHelpModal: React.FC<BrowserHelpModalProps> = ({
                 {lang === 'ru' ? 'Цель игры:' : 'Goal:'}
               </span>{' '}
               {lang === 'ru'
-                ? 'Очистите всё поле, собирая тройки одинаковых персонажей!'
-                : 'Clear the board by matching 3 identical cats!'}
+                ? 'Очистите всё поле, собирая тройки одинаковых артефактов!'
+                : 'Clear the board by matching 3 identical magical artifacts!'}
             </div>
           </div>
 
           <div className="rounded-2xl border border-violet-500/20 bg-slate-950/60 p-3">
             <div className="mb-2 text-xs font-bold text-violet-300">
-              {lang === 'ru' ? '42 котика и разные смешные ракурсы' : '42 cats in different silly poses'}
+              {lang === 'ru' ? '42 магических артефакта с уникальными узорами' : '42 magical artifacts with unique designs'}
             </div>
             <div className="grid grid-cols-7 gap-1.5">
               {CAMPAIGN_TILE_TYPES.map((type) => {
@@ -98,19 +98,19 @@ export const BrowserHelpModal: React.FC<BrowserHelpModalProps> = ({
                 {lang === 'ru' ? 'Золото и магазин:' : 'Gold & Shop:'}
               </span>{' '}
               {lang === 'ru'
-                ? 'Оракул бесплатный и безлимитный. За золото можно открыть мяуканье каждой кошки, отмены и перемешивания.'
-                : 'Oracle hints are free and unlimited. Spend gold to unlock each cat’s meow, undos, and shuffles.'}
+                ? 'Оракул бесплатный и безлимитный. За золото можно открыть звуки артефактов, отмены и перемешивания.'
+                : 'Oracle hints are free and unlimited. Spend gold to unlock artifact sounds, undos, and shuffles.'}
             </div>
           </div>
           <div className="p-3 rounded-2xl bg-slate-950/60 border border-fuchsia-500/20 flex gap-3 items-start">
             <div className="text-xl">🎯</div>
             <div>
               <span className="font-bold text-fuchsia-200">
-                {lang === 'ru' ? 'Задания и кот-босс:' : 'Challenges & cat boss:'}
+                {lang === 'ru' ? 'Задания и босс:' : 'Challenges & boss:'}
               </span>{' '}
               {lang === 'ru'
                 ? 'Выполняй ежедневные задания за золото. После прохождения уровня натяни рогатку и попади в кота-босса тремя шариками с краской: за точность будут дополнительные награды.'
-                : 'Complete daily challenges for gold. After clearing a level, pull the slingshot and splat the cat boss with three paintballs for bonus rewards.'}
+                : 'Complete daily challenges for gold. After clearing a level, pull the slingshot and splat the boss with three paintballs for bonus rewards.'}
             </div>
           </div>
         </div>

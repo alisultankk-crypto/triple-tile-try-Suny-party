@@ -95,8 +95,8 @@ export const ShopModal: React.FC<ShopModalProps> = ({
         </div>
         <div className="mt-5 border-t border-cyan-500/20 pt-4">
           <div className="mb-2 flex items-center justify-between">
-            <h3 className="font-black text-fuchsia-200">{isRu ? 'Мяуканья для карточек' : 'Card meows'}</h3>
-            <span className="text-xs text-slate-400">{isRu ? 'Открой звук каждой кошке' : 'Unlock each cat sound'}</span>
+            <h3 className="font-black text-fuchsia-200">{isRu ? 'Звуки артефактов' : 'Artifact sounds'}</h3>
+            <span className="text-xs text-slate-400">{isRu ? 'Открой магический звук для каждой карты' : 'Unlock a unique magic chime for each card'}</span>
           </div>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
             {CAMPAIGN_TILE_TYPES.map((type) => {

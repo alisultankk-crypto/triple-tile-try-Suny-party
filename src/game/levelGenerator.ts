@@ -7,8 +7,8 @@
 import { TileItemData, TileType } from '../types/game';
 import { CAMPAIGN_TILE_TYPES } from '../components/CosmicCards';
 
-export const TILE_WIDTH = 48;
-export const TILE_HEIGHT = 56;
+export const TILE_WIDTH = 56;
+export const TILE_HEIGHT = 64;
 
 const ALL_TYPES: TileType[] = [
   'yasuo',
@@ -156,17 +156,27 @@ export function generateCampaignLevel(level: number): TileItemData[] {
   });
 
   const boardPositions = positions.slice(0, 18 + Math.floor(progress * 24));
+  if (safeLevel !== COSMIC_MAP_LEVEL) {
+    for (let i = boardPositions.length - 1; i > 0; i--) {
+      const j = Math.floor(random() * (i + 1));
+      [boardPositions[i], boardPositions[j]] = [boardPositions[j], boardPositions[i]];
+    }
+  }
   const tripletsPerLayer = Math.max(1, Math.floor(boardPositions.length / 3));
   const blueprints = tripletTypes.flatMap((_, tripletIndex) => {
     const layer = Math.floor(tripletIndex / tripletsPerLayer);
     const firstPosition = (tripletIndex % tripletsPerLayer) * 3;
     return [0, 1, 2].map((offset) => {
       const position = boardPositions[firstPosition + offset];
-      return {
-        x: position.x,
-        y: position.y,
-        layer,
-      };
+        const warpX = Math.sin(position.y / 31 + tripletIndex * 1.7) * 16
+          + Math.cos(position.x / 42 - tripletIndex) * 8;
+        const warpY = Math.sin(position.x / 37 + tripletIndex * 2.1) * 15
+          + Math.cos(position.y / 32) * 6;
+        return {
+          x: position.x + (safeLevel === COSMIC_MAP_LEVEL ? 0 : warpX + (random() - 0.5) * 24),
+          y: position.y + (safeLevel === COSMIC_MAP_LEVEL ? 0 : warpY + (random() - 0.5) * 22),
+          layer,
+        };
     });
   });
 

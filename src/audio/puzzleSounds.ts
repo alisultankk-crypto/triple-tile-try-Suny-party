@@ -86,40 +86,31 @@ class CosmicAudioEngine {
     osc.stop(t + 0.09);
   }
 
-  public playCatMeow(variant: number) {
+  public playCardSound(variant: number) {
     if (this.isMuted) return;
     this.initCtx();
     if (!this.ctx || !this.masterGain) return;
 
     const now = this.ctx.currentTime;
-    const voice = Math.max(0, variant) % 42;
-    const pitch = 420 + (voice % 7) * 54;
-    const duration = 0.22 + (voice % 4) * 0.055;
-    const contour = voice % 3 === 0 ? 1.65 : voice % 3 === 1 ? 0.72 : 1.22;
+    const artifact = Math.max(0, variant) % 42;
+    const pitch = 360 + (artifact % 7) * 47;
+    const duration = 0.24 + (artifact % 4) * 0.04;
+    const notes = artifact % 3 === 0 ? [1, 1.5, 2.25] : artifact % 3 === 1 ? [1, 1.25, 2] : [1, 1.6, 2.4];
 
-    for (const [ratio, volume] of [[1, 0.11], [2.01, 0.027]] as const) {
+    for (const [index, ratio] of notes.entries()) {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
-      const vibrato = this.ctx.createOscillator();
-      const vibratoGain = this.ctx.createGain();
-      osc.type = voice % 2 === 0 ? 'triangle' : 'sine';
-      osc.frequency.setValueAtTime(pitch * ratio, now);
-      osc.frequency.exponentialRampToValueAtTime(pitch * contour * ratio, now + duration * 0.38);
-      osc.frequency.exponentialRampToValueAtTime(pitch * 0.78 * ratio, now + duration);
-      vibrato.type = 'sine';
-      vibrato.frequency.value = 6 + (voice % 5);
-      vibratoGain.gain.value = 9 + (voice % 8) * 2;
-      vibrato.connect(vibratoGain);
-      vibratoGain.connect(osc.frequency);
-      gain.gain.setValueAtTime(0.001, now);
-      gain.gain.linearRampToValueAtTime(volume, now + 0.025);
-      gain.gain.setTargetAtTime(0.001, now + duration * 0.68, duration * 0.12);
+      const start = now + index * 0.035;
+      osc.type = artifact % 2 === 0 ? 'triangle' : 'sine';
+      osc.frequency.setValueAtTime(pitch * ratio, start);
+      osc.frequency.exponentialRampToValueAtTime(pitch * ratio * (0.985 + (artifact % 5) * 0.01), start + duration);
+      gain.gain.setValueAtTime(0.001, start);
+      gain.gain.linearRampToValueAtTime(index === 0 ? 0.1 : 0.045, start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + duration);
       osc.connect(gain);
       gain.connect(this.masterGain);
-      vibrato.start(now);
-      osc.start(now);
-      vibrato.stop(now + duration);
-      osc.stop(now + duration + 0.02);
+      osc.start(start);
+      osc.stop(start + duration + 0.02);
     }
   }
 

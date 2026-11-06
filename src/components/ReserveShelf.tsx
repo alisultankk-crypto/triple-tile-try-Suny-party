@@ -28,7 +28,7 @@ export const ReserveShelf: React.FC<ReserveShelfProps> = ({
             <div
               key={tile.id}
               onClick={() => onTileClick(tile)}
-              className="w-12 h-14 sm:w-14 sm:h-16 cursor-pointer transition-all hover:-translate-y-1 active:translate-y-0 active:scale-95"
+              className="h-16 w-14 cursor-pointer transition-all hover:-translate-y-1 active:translate-y-0 active:scale-95"
             >
               <CosmicCardFrame type={tile.type} className="h-full w-full">
                 <CosmicCardImage type={tile.type} isCovered={false} />

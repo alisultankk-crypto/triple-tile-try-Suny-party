@@ -18,6 +18,8 @@ export const TileItem: React.FC<TileItemProps> = ({
   isHinted = false,
 }) => {
   const isClickable = !tile.isCovered && !tile.inSlot && !tile.inShelf;
+  const tileIndex = Number(tile.id.match(/^tile_(\d+)_/)?.[1] ?? 0);
+  const tilt = ((tileIndex * 7) % 13) - 6;
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -29,8 +31,8 @@ export const TileItem: React.FC<TileItemProps> = ({
   return (
     <div
       onClick={handleClick}
-      style={style}
-      className={`absolute w-12 h-14 rounded-lg transition-all duration-150 select-none ${
+      style={{ ...style, rotate: `${tilt}deg` }}
+      className={`absolute h-16 w-14 rounded-xl transition-all duration-150 select-none ${
         isClickable
           ? 'cursor-pointer hover:-translate-y-1 active:translate-y-0 active:scale-95 z-20'
           : 'cursor-not-allowed pointer-events-none'

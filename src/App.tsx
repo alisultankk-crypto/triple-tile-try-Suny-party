@@ -42,6 +42,8 @@ import {
   generateCampaignLevel,
   MAX_CAMPAIGN_LEVEL,
   COSMIC_MAP_LEVEL,
+  TILE_HEIGHT,
+  TILE_WIDTH,
   generateDailyChallenge,
   updateCoveredState,
   getTodayDateString,
@@ -324,7 +326,7 @@ export default function App() {
       const h = window.innerHeight;
       const footerHeight = footerRef.current?.getBoundingClientRect().height ?? 220;
       const availableHeight = Math.max(72, h - footerHeight - 16);
-      const scale = Math.max(0.2, Math.min(1, availableHeight / 360, (w - 24) / 340));
+      const scale = Math.max(0.2, Math.min(1, availableHeight / 390, (w - 24) / 380));
       setBoardScale(scale);
     };
 
@@ -494,7 +496,7 @@ export default function App() {
     }
 
     const meowIndex = CAMPAIGN_TILE_TYPES.indexOf(clickedTile.type);
-    if (unlockedMeows.includes(clickedTile.type)) puzzleSounds.playCatMeow(meowIndex);
+    if (unlockedMeows.includes(clickedTile.type)) puzzleSounds.playCardSound(meowIndex);
     else puzzleSounds.playTileTap();
 
     setHistory((prev) => [
@@ -527,7 +529,7 @@ export default function App() {
     if (slot.length >= maxSlots || isGameOver || isVictory || matchingIds.length > 0) return;
 
     const meowIndex = CAMPAIGN_TILE_TYPES.indexOf(shelfTile.type);
-    if (unlockedMeows.includes(shelfTile.type)) puzzleSounds.playCatMeow(meowIndex);
+    if (unlockedMeows.includes(shelfTile.type)) puzzleSounds.playCardSound(meowIndex);
     else puzzleSounds.playTileTap();
     const newShelf = shelf.filter((t) => t.id !== shelfTile.id);
     setShelf(newShelf);
@@ -1166,9 +1168,9 @@ export default function App() {
       {/* 5. Center Main Playing Field (Stretches smoothly to fill the screen) */}
       <main className="relative z-10 flex min-h-0 flex-1 w-full max-w-4xl flex-col items-center justify-center px-2">
         {/* The Scalable Responsive Board Container */}
-        <div className="relative w-[340px] h-[360px] sm:w-[380px] sm:h-[390px] md:w-[420px] md:h-[430px] flex items-center justify-center transition-all duration-300">
+        <div className="relative h-[390px] w-[380px] sm:h-[410px] sm:w-[400px] md:h-[430px] md:w-[420px] flex items-center justify-center transition-all duration-300">
           <div
-            className="relative w-[340px] h-[360px] origin-center transition-transform duration-300"
+            className="relative h-[390px] w-[380px] origin-center transition-transform duration-300"
             style={{
               transform: `scale(${boardScale})`,
             }}
@@ -1193,8 +1195,8 @@ export default function App() {
                   onClick={handleTileClick}
                   isHinted={isHinted}
                   style={{
-                    left: `calc(50% + ${tile.x}px - 24px)`,
-                    top: `calc(50% + ${tile.y}px - 28px)`,
+                    left: `calc(50% + ${tile.x}px - ${TILE_WIDTH / 2}px)`,
+                    top: `calc(50% + ${tile.y}px - ${TILE_HEIGHT / 2}px)`,
                     zIndex: tile.layer + 1,
                   }}
                 />
