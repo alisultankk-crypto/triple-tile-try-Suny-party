@@ -37,6 +37,13 @@ const COLORS = [
   '#e88d73', '#8cd5ee', '#bbadff', '#ffbe66', '#78e1be', '#dd83f2', '#f3e18b',
 ];
 
+const ITEM_ICONS = [
+  '🗡️', '👁️', '🧪', '🍀', '🛡️', '🏺', '🤖', '🧤', '🏹', '🪓', '🔮', '💎',
+  '⚙️', '🔪', '🌫️', '☄️', '🗝️', '🧴', '🎭', '☀️', '🔴', '🪐', '🕳️', '📜',
+  '🪖', '🚀', '🔭', '🔨', '🚢', '🔷', '🚪', '🛞', '🌌', '🪄', '🏆', '✨',
+  '🌑', '📡', '🐚', '🌺', '🌍', '🗺️',
+];
+
 const EFFECTS: MagicEffectType[] = ['wind', 'arcane', 'fire', 'frost', 'starlight', 'void'];
 
 export const CAMPAIGN_TILE_TYPES = TYPES;
@@ -81,34 +88,33 @@ export const CosmicCardFrame: React.FC<{
 }) => {
   const meta = getCardMeta(type);
   const frameColor = isHinted ? '#fde047' : isMatching ? '#fef08a' : meta.accentColor;
+  const palette = ['#354a6a', '#345c4d', '#724532'][meta.variant];
   return (
     <div
-      className={`relative overflow-hidden rounded-[12px] p-[2px] transition-all duration-200 ${className}`}
+      className={`relative overflow-hidden rounded-[13px] p-[2px] transition-all duration-200 ${className}`}
       style={{
-        background: `linear-gradient(145deg, #f8edc8 0%, ${frameColor} 24%, #25324a 55%, color-mix(in srgb, ${frameColor} 72%, white) 100%)`,
+        background: `linear-gradient(145deg, #fff1bd 0%, #d2aa67 12%, ${frameColor} 28%, #443046 62%, #171522 78%, #f5d894 100%)`,
         boxShadow: isHinted
           ? '0 0 18px rgba(250,204,21,.75), inset 0 0 0 1px rgba(255,255,255,.55)'
           : isMatching
             ? '0 0 20px rgba(250,204,21,.85)'
-            : `0 5px 0 #02040b, 0 8px 16px color-mix(in srgb, ${meta.accentColor} 42%, transparent)`,
+            : `0 4px 0 #080712, 0 8px 17px color-mix(in srgb, ${meta.accentColor} 48%, transparent), inset 0 0 0 1px rgba(255,255,255,.3)`,
       }}
     >
       <div
-        className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-[10px] border border-white/10"
+        className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-[11px] border border-white/20"
         style={{
-          background: `radial-gradient(ellipse at 50% 40%, color-mix(in srgb, ${meta.accentColor} 28%, #242034) 0%, #171521 48%, #090a12 100%)`,
+          background: `radial-gradient(ellipse at 50% 42%, color-mix(in srgb, ${meta.accentColor} 74%, ${palette}) 0%, ${palette} 57%, #252035 100%)`,
         }}
       >
-        <div className="pointer-events-none absolute inset-x-1 top-[3px] h-px bg-gradient-to-r from-transparent via-white/65 to-transparent" />
-        <div className="pointer-events-none absolute left-[4px] top-[4px] h-1 w-1 rounded-full bg-white/80 shadow-[0_0_5px_rgba(255,255,255,.8)]" />
-        <div
-          className="pointer-events-none absolute bottom-[4px] right-[4px] h-1 w-1 rounded-full"
-          style={{ backgroundColor: meta.accentColor, boxShadow: `0 0 6px ${meta.accentColor}` }}
-        />
-        <div className={isCovered ? 'scale-95 opacity-45 grayscale-[0.2]' : 'drop-shadow-[0_4px_5px_rgba(0,0,0,.7)]'}>
+        <div className="pointer-events-none absolute inset-[4px] rounded-[8px] border border-white/15" />
+        <div className="pointer-events-none absolute inset-x-2 top-[5px] h-px bg-gradient-to-r from-transparent via-white/60 to-transparent" />
+        <div className="pointer-events-none absolute -right-3 -top-3 h-8 w-8 rounded-full bg-white/10 blur-md" />
+        <div className="pointer-events-none absolute -bottom-3 -left-3 h-8 w-8 rounded-full bg-black/25 blur-md" />
+        <div className={isCovered ? 'scale-95 opacity-55 grayscale-[0.15]' : 'drop-shadow-[0_5px_5px_rgba(0,0,0,.62)]'}>
           {children}
         </div>
-        {isCovered && <div className="absolute inset-0 rounded-[10px] bg-slate-950/60" />}
+        {isCovered && <div className="absolute inset-0 rounded-[11px] bg-slate-950/45" />}
       </div>
     </div>
   );
@@ -162,22 +168,46 @@ function RelicArtwork({ meta, index, gradientId }: { meta: CardMeta; index: numb
     <svg viewBox="0 0 64 64" role="img" aria-label={meta.name} className="h-12 w-12 select-none overflow-visible sm:h-[52px] sm:w-[52px]">
       <defs>
         <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#fff4c2" />
-          <stop offset=".22" stopColor={meta.accentColor} />
-          <stop offset=".7" stopColor={meta.accentColor} />
-          <stop offset="1" stopColor="#272237" />
+          <stop offset="0" stopColor="#fff8d8" />
+          <stop offset=".2" stopColor={meta.accentColor} />
+          <stop offset=".58" stopColor={meta.accentColor} />
+          <stop offset="1" stopColor="#59405c" />
         </linearGradient>
-        <radialGradient id={`${gradientId}-halo`}>
-          <stop offset="0" stopColor={meta.accentColor} stopOpacity=".4" />
-          <stop offset="1" stopColor={meta.accentColor} stopOpacity="0" />
-        </radialGradient>
+        <linearGradient id={`${gradientId}-scene`} x1="0" y1="0" x2="0.8" y2="1">
+          <stop offset="0" stopColor={meta.variant === 0 ? '#466a8b' : meta.variant === 1 ? '#4b8065' : '#926148'} />
+          <stop offset="1" stopColor={meta.variant === 0 ? '#27324f' : meta.variant === 1 ? '#293f3c' : '#493449'} />
+        </linearGradient>
+        <filter id={`${gradientId}-shadow`} x="-40%" y="-40%" width="180%" height="180%">
+          <feDropShadow dx="0" dy="2" stdDeviation="1.8" floodColor="#090812" floodOpacity=".85" />
+        </filter>
       </defs>
-      <circle cx="32" cy="32" r="30" fill={`url(#${gradientId}-halo)`} />
+      <path d="M32 3 55 18 58 42 39 59 12 51 6 27Z" fill={`url(#${gradientId}-scene)`} stroke="#fff5c9" strokeOpacity=".42" strokeWidth="1.2" />
+      <circle cx="13" cy="15" r="1.4" fill="#fff5c9" />
+      <circle cx="51" cy="49" r="1.1" fill="#fff5c9" />
+      <path d={meta.variant === 0 ? 'M8 42Q32 17 56 41' : meta.variant === 1 ? 'M9 34Q31 10 55 33M13 44Q31 25 51 44' : 'M11 22Q31 44 53 20M9 35Q31 54 55 33'} fill="none" stroke={meta.accentColor} strokeOpacity=".35" strokeWidth="2" />
+      <circle cx="32" cy="32" r="22" fill="none" stroke="#fff1c1" strokeOpacity=".16" strokeWidth=".8" />
       {sparks.map((spark, sparkIndex) => (
-        <path key={sparkIndex} d={`M${spark.x} ${spark.y - 2}v4m-2-2h4`} stroke="#fff4c2" strokeOpacity=".8" strokeWidth="1" />
+        <path key={sparkIndex} d={`M${spark.x} ${spark.y - 2}v4m-2-2h4`} stroke={sparkIndex % 2 ? meta.accentColor : '#fff4c2'} strokeOpacity=".9" strokeWidth="1.3" />
       ))}
-      <g transform={`rotate(${(index * 19) % 19 - 9} 32 32)`}>{artwork}</g>
-      <path d="M9 49q23-7 46 0" fill="none" stroke="#fff" strokeOpacity=".18" strokeWidth="1" />
+      <g filter={`url(#${gradientId}-shadow)`} transform={`rotate(${(index * 19) % 19 - 9} 32 32)`}>
+        {meta.variant === 0 && <path d="M32 8 38 24 54 32 38 40 32 56 26 40 10 32 26 24Z" fill={meta.accentColor} fillOpacity=".15" stroke="#fff5c9" strokeOpacity=".38" strokeWidth="1" />}
+        {meta.variant === 1 && <path d="M13 32Q32 7 51 32 32 57 13 32Z" fill="#fff1c1" fillOpacity=".1" stroke={meta.accentColor} strokeOpacity=".75" strokeWidth="1.3" />}
+        {meta.variant === 2 && <><path d="M14 47Q32 14 50 47" fill="none" stroke="#fff5c9" strokeOpacity=".62" strokeWidth="1.4" /><path d="M19 48 32 12 45 48" fill="none" stroke={meta.accentColor} strokeOpacity=".55" strokeWidth="1.2" /></>}
+        <g opacity=".2">{artwork}</g>
+        <circle cx="32" cy="33" r="20" fill="#121522" fillOpacity=".52" stroke="#fff3c6" strokeOpacity=".38" strokeWidth="1.1" />
+        <text
+          x="32"
+          y="46"
+          textAnchor="middle"
+          fontSize="35"
+          style={{ fontFamily: '"Segoe UI Emoji", "Apple Color Emoji", sans-serif', filter: 'drop-shadow(0 2px 3px #000)' }}
+        >
+          {ITEM_ICONS[index]}
+        </text>
+        <path d="M25 25q7-8 14-1" fill="none" stroke="#fff" strokeOpacity=".72" strokeWidth="1.4" strokeLinecap="round" />
+        <circle cx={meta.variant === 1 ? 46 : 18} cy={meta.variant === 2 ? 18 : 46} r="2" fill="#fff4c2" />
+      </g>
+      <path d="M12 53q20-6 40 0" fill="none" stroke="#fff" strokeOpacity=".27" strokeWidth="1" />
     </svg>
   );
 }
