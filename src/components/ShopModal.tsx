@@ -1,33 +1,35 @@
 import React from 'react';
-import { Eye, RotateCcw, Shuffle, X, Zap } from 'lucide-react';
-import { Language } from '../types/game';
+import { RotateCcw, Shuffle, X, Zap } from 'lucide-react';
+import { Language, TileType } from '../types/game';
+import { CAMPAIGN_TILE_TYPES, CosmicCardImage, getCardMeta } from './CosmicCards';
 
-export type BoosterPurchase = 'undo' | 'shuffle' | 'extract' | 'hint';
+export type BoosterPurchase = 'undo' | 'shuffle' | 'extract';
 
 export const SHOP_PRICES: Record<BoosterPurchase, number> = {
   undo: 80,
   shuffle: 100,
   extract: 120,
-  hint: 150,
 };
 
 export const EXTRA_SLOT_PRICE = 5000;
+export const MEOW_CARD_PRICE = 75;
 
 interface ShopModalProps {
   isOpen: boolean;
   onClose: () => void;
   gold: number;
   extraSlotOwned: boolean;
+  unlockedMeows: TileType[];
   lang: Language;
   onBuyBooster: (booster: BoosterPurchase) => void;
   onBuyExtraSlot: () => void;
+  onBuyMeow: (type: TileType) => void;
 }
 
 const BOOSTER_ITEMS = [
-  { id: 'undo', labelRu: 'Отмена ×2', labelEn: 'Undo ×2', icon: RotateCcw, quantity: 2 },
-  { id: 'shuffle', labelRu: 'Перемешать ×1', labelEn: 'Shuffle ×1', icon: Shuffle, quantity: 1 },
-  { id: 'extract', labelRu: 'Вынуть ×1', labelEn: 'Extract ×1', icon: Zap, quantity: 1 },
-  { id: 'hint', labelRu: 'Подсказка ×2', labelEn: 'Hints ×2', icon: Eye, quantity: 2 },
+  { id: 'undo', labelRu: 'Отмена ×2', labelEn: 'Undo ×2', icon: RotateCcw },
+  { id: 'shuffle', labelRu: 'Перемешать ×1', labelEn: 'Shuffle ×1', icon: Shuffle },
+  { id: 'extract', labelRu: 'Вынуть ×1', labelEn: 'Extract ×1', icon: Zap },
 ] as const;
 
 export const ShopModal: React.FC<ShopModalProps> = ({
@@ -35,16 +37,18 @@ export const ShopModal: React.FC<ShopModalProps> = ({
   onClose,
   gold,
   extraSlotOwned,
+  unlockedMeows,
   lang,
   onBuyBooster,
   onBuyExtraSlot,
+  onBuyMeow,
 }) => {
   if (!isOpen) return null;
   const isRu = lang === 'ru';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 p-3 backdrop-blur-md">
-      <section className="w-full max-w-md rounded-3xl border-2 border-amber-400/50 bg-slate-950 p-4 text-white shadow-2xl sm:p-6">
+      <section className="max-h-[92dvh] w-full max-w-lg overflow-y-auto rounded-3xl border-2 border-amber-400/50 bg-slate-950 p-4 text-white shadow-2xl sm:p-6">
         <div className="mb-4 flex items-center justify-between">
           <div>
             <h2 className="text-xl font-black text-amber-200">{isRu ? 'Магазин' : 'Shop'}</h2>
@@ -56,7 +60,7 @@ export const ShopModal: React.FC<ShopModalProps> = ({
         </div>
 
         <div className="grid gap-2">
-          {BOOSTER_ITEMS.map(({ id, labelRu, labelEn, icon: Icon, quantity }) => {
+          {BOOSTER_ITEMS.map(({ id, labelRu, labelEn, icon: Icon }) => {
             const price = SHOP_PRICES[id];
             return (
               <button
@@ -88,6 +92,35 @@ export const ShopModal: React.FC<ShopModalProps> = ({
             </span>
             <span className="font-black text-yellow-300">{extraSlotOwned ? '✓' : `🪙 ${EXTRA_SLOT_PRICE.toLocaleString()}`}</span>
           </button>
+        </div>
+        <div className="mt-5 border-t border-cyan-500/20 pt-4">
+          <div className="mb-2 flex items-center justify-between">
+            <h3 className="font-black text-fuchsia-200">{isRu ? 'Мяуканья для карточек' : 'Card meows'}</h3>
+            <span className="text-xs text-slate-400">{isRu ? 'Открой звук каждой кошке' : 'Unlock each cat sound'}</span>
+          </div>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+            {CAMPAIGN_TILE_TYPES.map((type) => {
+              const meta = getCardMeta(type);
+              const owned = unlockedMeows.includes(type);
+              return (
+                <button
+                  key={type}
+                  onClick={() => onBuyMeow(type)}
+                  disabled={owned || gold < MEOW_CARD_PRICE}
+                  title={meta.name}
+                  className="flex min-w-0 items-center gap-2 border border-fuchsia-500/25 bg-black p-2 text-left transition hover:border-fuchsia-300 disabled:cursor-default disabled:opacity-55"
+                >
+                  <CosmicCardImage type={type} />
+                  <span className="min-w-0">
+                    <span className="block truncate text-xs font-bold">{meta.name}</span>
+                    <span className={`block text-[10px] font-black ${owned ? 'text-emerald-300' : 'text-yellow-300'}`}>
+                      {owned ? (isRu ? 'Куплено' : 'Unlocked') : `🪙 ${MEOW_CARD_PRICE}`}
+                    </span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </section>
     </div>

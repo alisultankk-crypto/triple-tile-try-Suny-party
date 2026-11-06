@@ -29,12 +29,10 @@ export const ReserveShelf: React.FC<ReserveShelfProps> = ({
             <div
               key={tile.id}
               onClick={() => onTileClick(tile)}
-              className="w-12 h-14 sm:w-14 sm:h-16 rounded-xl flex items-center justify-center bg-gradient-to-b from-[#1e1b4b] via-[#111827] to-[#030712] border-2 shadow-lg cursor-pointer hover:-translate-y-1 active:translate-y-0 active:scale-95 transition-all"
+              className="w-12 h-14 sm:w-14 sm:h-16 rounded-none flex items-center justify-center bg-black border-2 shadow-lg cursor-pointer hover:-translate-y-1 active:translate-y-0 active:scale-95 transition-all"
               style={{
                 borderColor: meta ? meta.accentColor : '#38bdf8',
-                backgroundImage: meta
-                  ? `linear-gradient(160deg, color-mix(in srgb, ${meta.accentColor} 48%, #111827), color-mix(in srgb, ${meta.accentColor} 22%, #030712))`
-                  : undefined,
+                backgroundColor: '#030303',
                 boxShadow: meta ? `0 0 12px ${meta.glowColor}` : undefined,
               }}
             >

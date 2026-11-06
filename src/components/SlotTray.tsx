@@ -35,20 +35,18 @@ export const SlotTray: React.FC<SlotTrayProps> = ({
           return (
             <div
               key={idx}
-              className="relative flex-1 max-w-[58px] aspect-[4/5] rounded-xl flex items-center justify-center bg-slate-900/90 border border-cyan-500/20 shadow-inner"
+              className="relative flex-1 max-w-[58px] aspect-[4/5] rounded-none flex items-center justify-center bg-black border border-cyan-500/20 shadow-inner"
             >
               {tile && (
                 <div
-                  className={`relative w-full h-full rounded-xl flex items-center justify-center bg-gradient-to-b from-[#1e1b4b] via-[#111827] to-[#030712] border-2 shadow-md transform transition-all duration-150 ${
+                  className={`relative w-full h-full rounded-none flex items-center justify-center bg-black border-2 shadow-md transform transition-all duration-150 ${
                     isMatching
                       ? 'scale-110 bg-amber-400/40 border-yellow-300 shadow-[0_0_20px_rgba(250,204,21,1)] animate-bounce'
                       : 'scale-100'
                   }`}
                   style={{
                     borderColor: meta ? meta.accentColor : '#38bdf8',
-                    backgroundImage: meta && !isMatching
-                      ? `linear-gradient(160deg, color-mix(in srgb, ${meta.accentColor} 48%, #111827), color-mix(in srgb, ${meta.accentColor} 22%, #030712))`
-                      : undefined,
+                    backgroundColor: '#030303',
                   }}
                 >
                   <CosmicCardImage type={tile.type} isCovered={false} />

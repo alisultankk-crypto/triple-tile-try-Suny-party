@@ -2,7 +2,7 @@
  * Try Party: COSMOS — Ultimate Cosmic 3-in-a-Row Party Game.
  * Features:
  * - 2 Languages: Russian & English (immediate toggle)
- * - Authentic 8-bit NES/GameBoy retro chiptune BGM & arcade SFX
+ * - Space-synth music, radio pings, cat meows, and arcade SFX
  * - Gold rewards and a booster shop with permanent tray upgrades
  * - Fullscreen responsive dynamic scaling layout (stretches to fill viewport cleanly)
  * - Level rewards and persistent campaign progress
@@ -26,6 +26,7 @@ import {
   Trophy,
   Maximize2,
   Minimize2,
+  Target,
 } from 'lucide-react';
 import {
   TileItemData,
@@ -61,10 +62,25 @@ import { FailModal } from './components/FailModal';
 import { WinModal } from './components/WinModal';
 import { DailyRewardModal } from './components/DailyRewardModal';
 import { BrowserHelpModal } from './components/BrowserHelpModal';
-import { ShopModal, BoosterPurchase, SHOP_PRICES, EXTRA_SLOT_PRICE } from './components/ShopModal';
+import {
+  ShopModal,
+  BoosterPurchase,
+  SHOP_PRICES,
+  EXTRA_SLOT_PRICE,
+  MEOW_CARD_PRICE,
+} from './components/ShopModal';
+import { CatBossChallenge } from './components/CatBossChallenge';
+import {
+  DailyChallengesModal,
+  DailyChallengeId,
+  DailyChallengeProgress,
+  DAILY_CHALLENGES,
+  emptyDailyChallengeProgress,
+  loadDailyChallengeProgress,
+} from './components/DailyChallengesModal';
 import { puzzleSounds } from './audio/puzzleSounds';
 import { TRANSLATIONS } from './i18n/translations';
-import { getCardMeta } from './components/CosmicCards';
+import { CAMPAIGN_TILE_TYPES, getCardMeta } from './components/CosmicCards';
 
 function findLastTypeIndex(items: TileItemData[], targetType: TileType): number {
   for (let i = items.length - 1; i >= 0; i--) {
@@ -73,8 +89,22 @@ function findLastTypeIndex(items: TileItemData[], targetType: TileType): number 
   return -1;
 }
 
+function loadUnlockedMeows(): TileType[] {
+  try {
+    const saved = localStorage.getItem('cosmic_unlocked_meows');
+    if (!saved) return [];
+    const parsed: unknown = JSON.parse(saved);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((type): type is TileType =>
+      typeof type === 'string' && CAMPAIGN_TILE_TYPES.includes(type as TileType)
+    );
+  } catch {
+    return [];
+  }
+}
+
 function loadBoosters(): BoostersState {
-  const defaults: BoostersState = { undo: 3, shuffle: 3, extract: 3, hint: 3 };
+  const defaults: BoostersState = { undo: 3, shuffle: 3, extract: 3 };
   try {
     const saved = localStorage.getItem('cosmic_boosters');
     if (!saved) return defaults;
@@ -85,7 +115,7 @@ function loadBoosters(): BoostersState {
         ? Math.max(0, Math.floor(value))
         : defaults[key];
     };
-    return { undo: count('undo'), shuffle: count('shuffle'), extract: count('extract'), hint: count('hint') };
+    return { undo: count('undo'), shuffle: count('shuffle'), extract: count('extract') };
   } catch {
     return defaults;
   }
@@ -178,6 +208,9 @@ export default function App() {
   const [dailyRank, setDailyRank] = useState<number | undefined>(undefined);
   const [isNewBest, setIsNewBest] = useState<boolean>(false);
   const [dailyLeaderboard, setDailyLeaderboard] = useState<DailyLeaderboardEntry[]>([]);
+  const [dailyChallenges, setDailyChallenges] = useState<DailyChallengeProgress>(() =>
+    loadDailyChallengeProgress(getTodayDateString())
+  );
 
   const timerStartRef = useRef<number>(0);
   const timerFrameRef = useRef<number>(0);
@@ -197,6 +230,8 @@ export default function App() {
 
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
   const [isVictory, setIsVictory] = useState<boolean>(false);
+  const [isBossChallenge, setIsBossChallenge] = useState<boolean>(false);
+  const [bossHitsThisLevel, setBossHitsThisLevel] = useState(0);
   const [showLeaderboard, setShowLeaderboard] = useState<boolean>(false);
   const [hasRevive, setHasRevive] = useState<boolean>(true);
 
@@ -209,6 +244,8 @@ export default function App() {
   const [showHelpModal, setShowHelpModal] = useState<boolean>(false);
   const [showShop, setShowShop] = useState<boolean>(false);
   const [showDailyRewardModal, setShowDailyRewardModal] = useState<boolean>(false);
+  const [showChallenges, setShowChallenges] = useState<boolean>(false);
+  const [unlockedMeows, setUnlockedMeows] = useState<TileType[]>(loadUnlockedMeows);
   const [gold, setGold] = useState<number>(() => {
     try {
       const saved = localStorage.getItem('cosmic_gold');
@@ -220,6 +257,13 @@ export default function App() {
     }
   });
   const [goldEarned, setGoldEarned] = useState<number>(0);
+  const updateDailyChallenges = (update: (progress: DailyChallengeProgress) => DailyChallengeProgress) => {
+    setDailyChallenges((previous) => {
+      const today = getTodayDateString();
+      const current = previous.date === today ? previous : emptyDailyChallengeProgress(today);
+      return update(current);
+    });
+  };
   const [maxSlots, setMaxSlots] = useState<number>(() => {
     try {
       return localStorage.getItem('cosmic_extra_slot') === '1' ? 8 : 7;
@@ -340,6 +384,13 @@ export default function App() {
   }, [mode, level]);
 
   useEffect(() => {
+    if (!import.meta.env.DEV) return;
+    const preview = new URLSearchParams(window.location.search).get('test');
+    if (preview === 'boss') setIsBossChallenge(true);
+    if (preview === 'challenges') setShowChallenges(true);
+  }, []);
+
+  useEffect(() => {
     try {
       localStorage.setItem('cosmic_campaign_level', String(level));
     } catch {}
@@ -356,6 +407,28 @@ export default function App() {
       localStorage.setItem('cosmic_boosters', JSON.stringify(boosters));
     } catch {}
   }, [boosters]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('cosmic_unlocked_meows', JSON.stringify(unlockedMeows));
+    } catch {}
+  }, [unlockedMeows]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('cosmic_daily_challenges', JSON.stringify(dailyChallenges));
+    } catch {}
+  }, [dailyChallenges]);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      const today = getTodayDateString();
+      setDailyChallenges((previous) =>
+        previous.date === today ? previous : loadDailyChallengeProgress(today)
+      );
+    }, 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   const startCurrentGame = () => {
     if (matchResolutionRef.current !== null) {
@@ -387,6 +460,8 @@ export default function App() {
     setHistory([]);
     setIsGameOver(false);
     setIsVictory(false);
+    setIsBossChallenge(false);
+    setBossHitsThisLevel(0);
     setHasRevive(true);
     setHintedTileTypes([]);
     comboRef.current = 1;
@@ -418,7 +493,9 @@ export default function App() {
       setTimerRunning(true);
     }
 
-    puzzleSounds.playTileTap();
+    const meowIndex = CAMPAIGN_TILE_TYPES.indexOf(clickedTile.type);
+    if (unlockedMeows.includes(clickedTile.type)) puzzleSounds.playCatMeow(meowIndex);
+    else puzzleSounds.playTileTap();
 
     setHistory((prev) => [
       ...prev,
@@ -449,7 +526,9 @@ export default function App() {
   const handleShelfTileClick = (shelfTile: TileItemData) => {
     if (slot.length >= maxSlots || isGameOver || isVictory || matchingIds.length > 0) return;
 
-    puzzleSounds.playTileTap();
+    const meowIndex = CAMPAIGN_TILE_TYPES.indexOf(shelfTile.type);
+    if (unlockedMeows.includes(shelfTile.type)) puzzleSounds.playCatMeow(meowIndex);
+    else puzzleSounds.playTileTap();
     const newShelf = shelf.filter((t) => t.id !== shelfTile.id);
     setShelf(newShelf);
 
@@ -467,7 +546,7 @@ export default function App() {
     checkSlotMatches(newSlot, tiles);
   };
 
-  // Check if 3 matching cats exist in the slot
+  // Check if 3 matching cards exist in the slot
   const checkSlotMatches = (currentSlot: TileItemData[], currentTiles: TileItemData[]) => {
     const counts: { [type: string]: TileItemData[] } = {};
     for (const item of currentSlot) {
@@ -490,7 +569,8 @@ export default function App() {
         const earnedPoints = 300 * currentCombo;
         const earnedGold = 10 * currentCombo;
 
-        puzzleSounds.playMagicEffect(magicType, currentCombo);
+        puzzleSounds.playMatchChime();
+        updateDailyChallenges((progress) => ({ ...progress, matches: progress.matches + 1 }));
         comboRef.current++;
         setCombo(comboRef.current);
         setGold((prev) => prev + earnedGold);
@@ -570,10 +650,19 @@ export default function App() {
   const handleVictory = () => {
     if (victoryHandledRef.current) return;
     victoryHandledRef.current = true;
-    setIsVictory(true);
     setTimerRunning(false);
-    puzzleSounds.playVictory();
+    if (mode === 'campaign') {
+      setIsBossChallenge(true);
+      return;
+    }
+    finishLevel(0);
+  };
 
+  const finishLevel = (bossHits: number) => {
+    setIsBossChallenge(false);
+    setIsVictory(true);
+    setBossHitsThisLevel(bossHits);
+    puzzleSounds.playVictory();
     setMagicBurst({
       id: `victory_${Date.now()}`,
       type: 'starlight',
@@ -582,9 +671,14 @@ export default function App() {
     });
 
     const victoryBonus = mode === 'daily' ? 5000 : level * 2000;
-    const victoryGold = mode === 'daily' ? 100 : 100 + Math.min(level * 2, 500);
+    const bossGold = bossHits * 60 + (bossHits === 3 ? 200 : 0);
+    const victoryGold = (mode === 'daily' ? 100 : 100 + Math.min(level * 2, 500)) + bossGold;
     setGold((prev) => prev + victoryGold);
     setGoldEarned((prev) => prev + victoryGold);
+    if (bossHits === 3) {
+      setBoosters((prev) => ({ ...prev, extract: prev.extract + 1 }));
+    }
+    updateDailyChallenges((progress) => ({ ...progress, clears: progress.clears + 1 }));
     setScore((prev) => {
       const next = prev + victoryBonus;
       setHighScore((curHigh) => {
@@ -688,9 +782,7 @@ export default function App() {
 
   // Booster: Hint
   const handleHintBooster = () => {
-    if (boosters.hint <= 0) return;
     puzzleSounds.playBooster();
-    setBoosters((prev) => ({ ...prev, hint: prev.hint - 1 }));
 
     const unpicked = tiles.filter((t) => !t.inSlot && !t.inShelf && !t.isEliminated);
     const uncovered = unpicked.filter((t) => !t.isCovered);
@@ -766,7 +858,6 @@ export default function App() {
       undo: prev.undo + (boostersEarned.undo || 0),
       shuffle: prev.shuffle + (boostersEarned.shuffle || 0),
       extract: prev.extract + (boostersEarned.extract || 0),
-      hint: prev.hint + (boostersEarned.hint || 0),
     }));
     setGold((prev) => prev + goldEarned);
 
@@ -805,8 +896,29 @@ export default function App() {
     setGold((prev) => prev - price);
     setBoosters((prev) => ({
       ...prev,
-      [booster]: prev[booster] + (booster === 'undo' || booster === 'hint' ? 2 : 1),
+      [booster]: prev[booster] + (booster === 'undo' ? 2 : 1),
     }));
+    puzzleSounds.playBooster();
+  };
+
+  const handleBuyMeow = (type: TileType) => {
+    if (unlockedMeows.includes(type) || gold < MEOW_CARD_PRICE) return;
+    setGold((prev) => prev - MEOW_CARD_PRICE);
+    setUnlockedMeows((prev) => [...prev, type]);
+    puzzleSounds.playBooster();
+  };
+
+  const handleClaimDailyChallenge = (id: DailyChallengeId, reward: number) => {
+    const challenge = DAILY_CHALLENGES.find((item) => item.id === id);
+    if (!challenge || challenge.reward !== reward || dailyChallenges.claimed.includes(id)) return;
+    const currentProgress = id === 'matches'
+      ? dailyChallenges.matches
+      : id === 'clear'
+        ? dailyChallenges.clears
+        : dailyChallenges.paintHits;
+    if (currentProgress < challenge.target) return;
+    updateDailyChallenges((progress) => ({ ...progress, claimed: [...progress.claimed, id] }));
+    setGold((prev) => prev + reward);
     puzzleSounds.playBooster();
   };
 
@@ -859,6 +971,7 @@ export default function App() {
         setShowLeaderboard(false);
         setShowDailyRewardModal(false);
         setShowShop(false);
+        setShowChallenges(false);
       }
     };
 
@@ -1128,6 +1241,9 @@ export default function App() {
           <button onClick={() => setShowDailyRewardModal(true)} title={t.dailyRewardBtn} aria-label={t.dailyRewardBtn} className="rounded-lg bg-slate-900 p-1.5 text-yellow-300">
             <Gift className="h-4 w-4" />
           </button>
+          <button onClick={() => setShowChallenges(true)} title={lang === 'ru' ? 'Ежедневные задания' : 'Daily challenges'} aria-label={lang === 'ru' ? 'Ежедневные задания' : 'Daily challenges'} className="rounded-lg bg-slate-900 p-1.5 text-fuchsia-300">
+            <Target className="h-4 w-4" />
+          </button>
           <button onClick={handleToggleMute} title={isMuted ? t.soundOff : t.soundOn} aria-label={isMuted ? t.soundOff : t.soundOn} className="rounded-lg bg-slate-900 p-1.5 text-cyan-300">
             {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
           </button>
@@ -1202,6 +1318,7 @@ export default function App() {
         isNewBest={isNewBest}
         dailyRank={dailyRank}
         goldEarned={goldEarned}
+        bossHits={bossHitsThisLevel}
         lang={lang}
         isCampaignComplete={mode === 'campaign' && level === MAX_CAMPAIGN_LEVEL}
         onNextLevel={() => setLevel((prev) => Math.min(MAX_CAMPAIGN_LEVEL, prev + 1))}
@@ -1217,10 +1334,28 @@ export default function App() {
         onClose={() => setShowShop(false)}
         gold={gold}
         extraSlotOwned={maxSlots > 7}
+        unlockedMeows={unlockedMeows}
         lang={lang}
         onBuyBooster={handleBuyBooster}
         onBuyExtraSlot={handleBuyExtraSlot}
+        onBuyMeow={handleBuyMeow}
       />
+
+      <DailyChallengesModal
+        isOpen={showChallenges}
+        onClose={() => setShowChallenges(false)}
+        progress={dailyChallenges}
+        lang={lang}
+        onClaim={handleClaimDailyChallenge}
+      />
+
+      {isBossChallenge && (
+        <CatBossChallenge
+          lang={lang}
+          onHit={() => updateDailyChallenges((progress) => ({ ...progress, paintHits: progress.paintHits + 1 }))}
+          onComplete={finishLevel}
+        />
+      )}
 
       {/* Browser Controls & Rules Guide */}
       <BrowserHelpModal

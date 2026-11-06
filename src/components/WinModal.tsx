@@ -12,6 +12,7 @@ interface WinModalProps {
   isNewBest?: boolean;
   dailyRank?: number;
   goldEarned?: number;
+  bossHits?: number;
   lang?: Language;
   isCampaignComplete?: boolean;
   onNextLevel: () => void;
@@ -27,6 +28,7 @@ export const WinModal: React.FC<WinModalProps> = ({
   isNewBest = false,
   dailyRank,
   goldEarned = 0,
+  bossHits = 0,
   lang = 'ru',
   isCampaignComplete = false,
   onNextLevel,
@@ -101,6 +103,13 @@ export const WinModal: React.FC<WinModalProps> = ({
           <div className="p-2.5 rounded-xl bg-amber-400/30 border border-yellow-500 mb-3 flex items-center justify-between px-3">
             <span className="text-xs font-black text-amber-900 uppercase">{lang === 'ru' ? 'Золото' : 'Gold'}:</span>
             <span className="font-mono text-lg font-black text-amber-950">+{goldEarned.toLocaleString()} 🪙</span>
+          </div>
+        )}
+        {bossHits > 0 && (
+          <div className="mb-3 text-xs font-bold text-fuchsia-800">
+            {lang === 'ru'
+              ? `🎨 Бонус за попадания по коту-боссу: ${bossHits}/3${bossHits === 3 ? ' · +1 бустер «Вынуть 3»' : ''}`
+              : `🎨 Cat boss hits: ${bossHits}/3${bossHits === 3 ? ' · +1 Extract booster' : ''}`}
           </div>
         )}
 

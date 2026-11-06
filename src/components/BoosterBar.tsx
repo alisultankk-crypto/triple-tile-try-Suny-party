@@ -94,12 +94,7 @@ export const BoosterBar: React.FC<BoosterBarProps> = ({
       {/* 4. Oracle Hint */}
       <button
         onClick={onHint}
-        disabled={boosters.hint <= 0}
-        className={`group relative flex-1 flex flex-col items-center justify-center py-2 px-1.5 rounded-2xl border-2 transition-all active:scale-95 shadow-lg ${
-          boosters.hint > 0
-            ? 'bg-gradient-to-b from-indigo-900 to-slate-950 border-indigo-400 text-indigo-200 shadow-[0_0_15px_rgba(99,102,241,0.4)] hover:brightness-125'
-            : 'bg-slate-900/60 border-slate-800 text-slate-600 cursor-not-allowed opacity-50'
-        }`}
+        className="group relative flex-1 flex flex-col items-center justify-center py-2 px-1.5 rounded-2xl border-2 transition-all active:scale-95 shadow-lg bg-gradient-to-b from-indigo-900 to-slate-950 border-indigo-400 text-indigo-200 shadow-[0_0_15px_rgba(99,102,241,0.4)] hover:brightness-125"
         title="Oracle Hint [4]"
       >
         <Eye className="w-5 h-5 text-indigo-400 mb-0.5" />
@@ -108,7 +103,7 @@ export const BoosterBar: React.FC<BoosterBarProps> = ({
           <span className="hidden sm:inline-block px-1 rounded bg-indigo-950 text-indigo-300 text-[9px] font-mono border border-indigo-500/30">4</span>
         </span>
         <span className="absolute -top-1.5 -right-1.5 px-1.5 py-0.2 rounded-full text-[10px] font-black bg-yellow-400 text-slate-950 border border-white/20 shadow">
-          {boosters.hint}
+          ∞
         </span>
       </button>
     </div>

@@ -86,6 +86,123 @@ class CosmicAudioEngine {
     osc.stop(t + 0.09);
   }
 
+  public playCatMeow(variant: number) {
+    if (this.isMuted) return;
+    this.initCtx();
+    if (!this.ctx || !this.masterGain) return;
+
+    const now = this.ctx.currentTime;
+    const voice = Math.max(0, variant) % 42;
+    const pitch = 420 + (voice % 7) * 54;
+    const duration = 0.22 + (voice % 4) * 0.055;
+    const contour = voice % 3 === 0 ? 1.65 : voice % 3 === 1 ? 0.72 : 1.22;
+
+    for (const [ratio, volume] of [[1, 0.11], [2.01, 0.027]] as const) {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      const vibrato = this.ctx.createOscillator();
+      const vibratoGain = this.ctx.createGain();
+      osc.type = voice % 2 === 0 ? 'triangle' : 'sine';
+      osc.frequency.setValueAtTime(pitch * ratio, now);
+      osc.frequency.exponentialRampToValueAtTime(pitch * contour * ratio, now + duration * 0.38);
+      osc.frequency.exponentialRampToValueAtTime(pitch * 0.78 * ratio, now + duration);
+      vibrato.type = 'sine';
+      vibrato.frequency.value = 6 + (voice % 5);
+      vibratoGain.gain.value = 9 + (voice % 8) * 2;
+      vibrato.connect(vibratoGain);
+      vibratoGain.connect(osc.frequency);
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.linearRampToValueAtTime(volume, now + 0.025);
+      gain.gain.setTargetAtTime(0.001, now + duration * 0.68, duration * 0.12);
+      osc.connect(gain);
+      gain.connect(this.masterGain);
+      vibrato.start(now);
+      osc.start(now);
+      vibrato.stop(now + duration);
+      osc.stop(now + duration + 0.02);
+    }
+  }
+
+  public playMatchChime() {
+    if (this.isMuted) return;
+    this.initCtx();
+    if (!this.ctx || !this.masterGain) return;
+
+    const now = this.ctx.currentTime;
+    [1046.5, 1568, 2093].forEach((frequency, index) => {
+      const start = now + index * 0.045;
+      const osc = this.ctx!.createOscillator();
+      const gain = this.ctx!.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(frequency, start);
+      gain.gain.setValueAtTime(0.001, start);
+      gain.gain.linearRampToValueAtTime(index === 0 ? 0.16 : 0.1, start + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + 0.34);
+      osc.connect(gain);
+      gain.connect(this.masterGain!);
+      osc.start(start);
+      osc.stop(start + 0.36);
+    });
+  }
+
+  public playPaintShot() {
+    if (this.isMuted) return;
+    this.initCtx();
+    if (!this.ctx || !this.masterGain) return;
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(420, now);
+    osc.frequency.exponentialRampToValueAtTime(140, now + 0.18);
+    gain.gain.setValueAtTime(0.13, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+    osc.connect(gain);
+    gain.connect(this.masterGain);
+    osc.start(now);
+    osc.stop(now + 0.21);
+  }
+
+  public playPaintHit() {
+    if (this.isMuted) return;
+    this.initCtx();
+    if (!this.ctx || !this.masterGain) return;
+    const now = this.ctx.currentTime;
+    const noiseBuffer = this.ctx.createBuffer(1, Math.floor(this.ctx.sampleRate * 0.12), this.ctx.sampleRate);
+    const data = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
+    const noise = this.ctx.createBufferSource();
+    const filter = this.ctx.createBiquadFilter();
+    const gain = this.ctx.createGain();
+    noise.buffer = noiseBuffer;
+    filter.type = 'lowpass';
+    filter.frequency.value = 850;
+    gain.gain.setValueAtTime(0.26, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.13);
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.masterGain);
+    noise.start(now);
+  }
+
+  public playPaintMiss() {
+    if (this.isMuted) return;
+    this.initCtx();
+    if (!this.ctx || !this.masterGain) return;
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(420, now);
+    osc.frequency.exponentialRampToValueAtTime(180, now + 0.24);
+    gain.gain.setValueAtTime(0.08, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+    osc.connect(gain);
+    gain.connect(this.masterGain);
+    osc.start(now);
+    osc.stop(now + 0.26);
+  }
+
   /**
    * 8-битный пружинистый прыжок / забавный звук
    */
@@ -371,10 +488,7 @@ class CosmicAudioEngine {
     return this.bgmPlaying;
   }
 
-  /**
-   * Настоящая зажигательная 8-битная чиптюн музыка (NES/GameBoy Chiptune)
-   * Использует 2 пульс-генератора (Square), треугольный бас (Triangle) и 8-битный нойз ритм!
-   */
+  /** Calm space synth with drifting notes and occasional satellite-like radio pings. */
   public startBGM() {
     if (this.bgmPlaying || !this.ctx || !this.masterGain) return;
     this.bgmPlaying = true;
@@ -382,41 +496,22 @@ class CosmicAudioEngine {
     this.bgmGain.gain.value = this.isMuted ? 0 : 0.16;
     this.bgmGain.connect(this.masterGain);
 
-    // Задорная ретро-мелодия в стиле Mega Man / Super Mario / DuckTales
-    // 32-шаговая циклическая тема
     const leadNotes = [
-      659.25, 659.25, 0,      659.25, 0,      523.25, 659.25, 0,
-      783.99, 0,      0,      0,      392.0,  0,      0,      0,
-      523.25, 0,      0,      392.0,  0,      0,      329.63, 0,
-      440.0,  0,      493.88, 0,      466.16, 440.0,  0,      0,
-      392.0,  659.25, 783.99, 880.0,  0,      698.46, 783.99, 0,
-      659.25, 0,      523.25, 587.33, 493.88, 0,      0,      0,
-      523.25, 0,      0,      392.0,  0,      0,      329.63, 0,
-      440.0,  0,      493.88, 0,      466.16, 440.0,  0,      0,
+      523.25, 0, 659.25, 0, 783.99, 0, 659.25, 0,
+      587.33, 0, 698.46, 0, 880, 0, 698.46, 0,
+      493.88, 0, 587.33, 0, 739.99, 0, 587.33, 0,
+      440, 0, 523.25, 0, 659.25, 0, 783.99, 0,
     ];
 
-    // Аккордовые арпеджио (каждый аккорд быстро перебирается: тоника, терция, квинта, октава)
     const arpeggioChords = [
-      [261.63, 329.63, 392.0, 523.25], // C major
-      [261.63, 329.63, 392.0, 523.25],
-      [220.0, 261.63, 329.63, 440.0],  // A minor
-      [174.61, 220.0, 261.63, 349.23], // F major
-      [196.0, 246.94, 293.66, 392.0],  // G major
-      [196.0, 246.94, 293.66, 392.0],
-      [220.0, 261.63, 329.63, 440.0],  // A minor
-      [196.0, 246.94, 293.66, 392.0],  // G major
-    ];
-
-    // Ретро треугольный бас
-    const bassNotes = [
-      130.81, 130.81, 130.81, 130.81, 110.0, 110.0, 110.0, 110.0,
-      87.31,  87.31,  87.31,  87.31,  98.0,  98.0,  98.0,  98.0,
-      130.81, 130.81, 130.81, 130.81, 110.0, 110.0, 110.0, 110.0,
-      87.31,  87.31,  98.0,   98.0,   130.81, 130.81, 130.81, 130.81,
+      [261.63, 392, 523.25, 659.25],
+      [220, 329.63, 440, 587.33],
+      [246.94, 369.99, 493.88, 659.25],
+      [196, 293.66, 392, 523.25],
     ];
 
     this.bgmStep = 0;
-    const stepMs = 145; // ~150 BPM energetic 8-bit tempo
+    const stepMs = 235;
 
     const tick = () => {
       if (!this.bgmPlaying || !this.ctx || !this.bgmGain) return;
@@ -425,105 +520,75 @@ class CosmicAudioEngine {
       const step = this.bgmStep;
       this.bgmStep = (this.bgmStep + 1) % leadNotes.length;
 
-      // 1. Канал Лид-Мелодии: Square wave
       const freq = leadNotes[step];
       if (freq > 0) {
         const leadOsc = this.ctx.createOscillator();
         const leadGain = this.ctx.createGain();
 
-        leadOsc.type = 'square';
+        leadOsc.type = 'sine';
         leadOsc.frequency.setValueAtTime(freq, now);
 
-        leadGain.gain.setValueAtTime(0.08, now);
-        leadGain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+        leadGain.gain.setValueAtTime(0.055, now);
+        leadGain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
 
         leadOsc.connect(leadGain);
         leadGain.connect(this.bgmGain);
 
         leadOsc.start(now);
-        leadOsc.stop(now + 0.13);
+        leadOsc.stop(now + 0.3);
       }
 
-      // 2. Канал 8-битного скоростного Арпеджио (каждые 8 шагов меняется аккорд)
       const chordIdx = Math.floor(step / 8) % arpeggioChords.length;
       const chord = arpeggioChords[chordIdx];
-      // Внутри шага воспроизводим 4 быстрые микро-ноты по 35мс: классический chiptune arpeggio!
       const arpNoteFreq = chord[step % 4];
       if (arpNoteFreq) {
         const arpOsc = this.ctx.createOscillator();
         const arpGain = this.ctx.createGain();
 
-        arpOsc.type = 'square';
-        arpOsc.frequency.setValueAtTime(arpNoteFreq * 1.5, now);
+        arpOsc.type = 'triangle';
+        arpOsc.frequency.setValueAtTime(arpNoteFreq * 2, now);
 
-        arpGain.gain.setValueAtTime(0.04, now);
-        arpGain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+        arpGain.gain.setValueAtTime(0.025, now);
+        arpGain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
 
         arpOsc.connect(arpGain);
         arpGain.connect(this.bgmGain);
 
         arpOsc.start(now);
-        arpOsc.stop(now + 0.09);
+        arpOsc.stop(now + 0.2);
       }
 
-      // 3. Канал Баса: NES Triangle wave
-      const bassIdx = step % bassNotes.length;
-      const bassFreq = bassNotes[bassIdx];
-      if (step % 2 === 0) {
+      if (step % 4 === 0) {
         const bassOsc = this.ctx.createOscillator();
         const bassGain = this.ctx.createGain();
 
         bassOsc.type = 'triangle';
-        bassOsc.frequency.setValueAtTime(bassFreq, now);
+        bassOsc.frequency.setValueAtTime(chord[0] / 2, now);
 
-        bassGain.gain.setValueAtTime(0.12, now);
-        bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+        bassGain.gain.setValueAtTime(0.045, now);
+        bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
 
         bassOsc.connect(bassGain);
         bassGain.connect(this.bgmGain);
 
         bassOsc.start(now);
-        bassOsc.stop(now + 0.24);
+        bassOsc.stop(now + 0.52);
       }
 
-      // 4. Канал 8-битных барабанов: Белый шум через фильтр
-      // Бочка на каждый 4-й шаг, малый барабан на шаги 2, 6, 10...
-      if (step % 4 === 0) {
-        // Ретро Кик (быстрый питч-даун синуса)
-        const kickOsc = this.ctx.createOscillator();
-        const kickGain = this.ctx.createGain();
-        kickOsc.type = 'triangle';
-        kickOsc.frequency.setValueAtTime(140, now);
-        kickOsc.frequency.exponentialRampToValueAtTime(35, now + 0.08);
-        kickGain.gain.setValueAtTime(0.2, now);
-        kickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
-        kickOsc.connect(kickGain);
-        kickGain.connect(this.bgmGain);
-        kickOsc.start(now);
-        kickOsc.stop(now + 0.1);
-      } else if (step % 4 === 2) {
-        // Ретро нойз снейр (короткий шум)
-        const bufferSize = 300;
-        const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-        const data = noiseBuffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.12;
-
-        const noise = this.ctx.createBufferSource();
-        noise.buffer = noiseBuffer;
-
-        const noiseFilter = this.ctx.createBiquadFilter();
-        noiseFilter.type = 'bandpass';
-        noiseFilter.frequency.setValueAtTime(1200, now);
-
-        const noiseGain = this.ctx.createGain();
-        noiseGain.gain.setValueAtTime(0.15, now);
-        noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
-
-        noise.connect(noiseFilter);
-        noiseFilter.connect(noiseGain);
-        noiseGain.connect(this.bgmGain);
-
-        noise.start(now);
+      if (step % 11 === 6) {
+        const ping = this.ctx.createOscillator();
+        const pingGain = this.ctx.createGain();
+        const pingFrequency = 1200 + (step % 5) * 170;
+        ping.type = 'sine';
+        ping.frequency.setValueAtTime(pingFrequency * 1.4, now);
+        ping.frequency.exponentialRampToValueAtTime(pingFrequency, now + 0.12);
+        pingGain.gain.setValueAtTime(0.001, now);
+        pingGain.gain.linearRampToValueAtTime(0.06, now + 0.02);
+        pingGain.gain.exponentialRampToValueAtTime(0.001, now + 0.48);
+        ping.connect(pingGain);
+        pingGain.connect(this.bgmGain);
+        ping.start(now);
+        ping.stop(now + 0.5);
       }
     };
 

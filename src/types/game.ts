@@ -42,38 +42,6 @@ export type TileType =
   | 'ringworld'
   | 'constellation';
 
-export type OriginalTileType = Exclude<
-  TileType,
-  | 'nebula'
-  | 'comet'
-  | 'satellite'
-  | 'ufo'
-  | 'moon'
-  | 'sun'
-  | 'mars'
-  | 'saturn'
-  | 'blackhole'
-  | 'galaxy'
-  | 'astronaut'
-  | 'rocket'
-  | 'telescope'
-  | 'meteor'
-  | 'starship'
-  | 'crystal'
-  | 'portal'
-  | 'rover'
-  | 'aurora'
-  | 'pulsar'
-  | 'quasar'
-  | 'stardust'
-  | 'eclipse'
-  | 'probe'
-  | 'spacewhale'
-  | 'cosmicflower'
-  | 'ringworld'
-  | 'constellation'
->;
-
 export type MagicEffectType =
   | 'arcane'
   | 'fire'
@@ -100,7 +68,6 @@ export interface BoostersState {
   undo: number;
   shuffle: number;
   extract: number;
-  hint: number;
 }
 
 export interface RegionScore {
@@ -127,10 +94,6 @@ export interface DailyChallengeInfo {
   seed: number;
   timeRemainingMs: number;
 }
-
-// ==========================================
-// 💎 ДРАГОЦЕННЫЕ КАМНИ И ИНВЕНТАРЬ
-// ==========================================
 
 export interface DailyLoginState {
   lastClaimDate: string; // YYYY-MM-DD
