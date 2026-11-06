@@ -29,7 +29,7 @@ export const ReserveShelf: React.FC<ReserveShelfProps> = ({
             <div
               key={tile.id}
               onClick={() => onTileClick(tile)}
-              className="w-12 h-14 sm:w-14 sm:h-16 rounded-none flex items-center justify-center bg-black border-2 shadow-lg cursor-pointer hover:-translate-y-1 active:translate-y-0 active:scale-95 transition-all"
+              className="w-12 h-14 sm:w-14 sm:h-16 rounded-lg flex items-center justify-center bg-black border-2 shadow-lg cursor-pointer hover:-translate-y-1 active:translate-y-0 active:scale-95 transition-all"
               style={{
                 borderColor: meta ? meta.accentColor : '#38bdf8',
                 backgroundColor: '#030303',

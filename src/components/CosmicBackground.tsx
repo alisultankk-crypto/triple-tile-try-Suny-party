@@ -19,7 +19,7 @@ export const CosmicBackground: React.FC = () => {
 
     // Keep most streaks near the edges so the playing field stays readable.
     const starCount = 140;
-    const stars: { x: number; y: number; r: number; alpha: number; speed: number; color: string; side: number }[] = [];
+    const stars: { x: number; y: number; r: number; alpha: number; color: string }[] = [];
     const colors = ['#ffffff', '#bae6fd', '#fef08a', '#e9d5ff', '#c7d2fe'];
 
     for (let i = 0; i < starCount; i++) {
@@ -29,9 +29,7 @@ export const CosmicBackground: React.FC = () => {
         y: Math.random() * window.innerHeight,
         r: Math.random() < 0.2 ? 1.8 : Math.random() < 0.6 ? 1.2 : 0.8,
         alpha: Math.random() * 0.8 + 0.2,
-        speed: 0.8 + Math.random() * 2.8,
         color: colors[Math.floor(Math.random() * colors.length)],
-        side,
       });
     }
 
@@ -81,28 +79,15 @@ export const CosmicBackground: React.FC = () => {
       ctx.fillStyle = g2;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Stars stream outward from the center to create a gentle warp-speed effect.
+      // Keep stars still so the board stays visually calm.
       for (const s of stars) {
-        const twinkle = Math.sin(time * s.speed + s.x) * 0.35 + 0.65;
-        const dx = (s.x - canvas.width / 2) * s.speed * 0.003;
-        const dy = (s.y - canvas.height / 2) * s.speed * 0.003;
         ctx.save();
-        ctx.globalAlpha = Math.max(0.1, s.alpha * twinkle);
-        ctx.shadowColor = s.color;
-        ctx.shadowBlur = s.r > 1.2 ? 8 : 3;
-        ctx.strokeStyle = s.color;
-        ctx.lineWidth = s.r;
+        ctx.globalAlpha = s.alpha;
+        ctx.fillStyle = s.color;
         ctx.beginPath();
-        ctx.moveTo(s.x - dx * 8, s.y - dy * 8);
-        ctx.lineTo(s.x, s.y);
-        ctx.stroke();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fill();
         ctx.restore();
-        s.x += dx;
-        s.y += dy;
-        if (s.x < -5 || s.x > canvas.width + 5 || s.y < -5 || s.y > canvas.height + 5) {
-          s.x = s.side === 0 ? Math.random() * canvas.width * 0.2 : canvas.width * (0.8 + Math.random() * 0.2);
-          s.y = Math.random() * canvas.height;
-        }
       }
 
       nextVisitorIn -= 0.02;

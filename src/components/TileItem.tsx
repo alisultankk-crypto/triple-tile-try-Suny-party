@@ -31,7 +31,7 @@ export const TileItem: React.FC<TileItemProps> = ({
     <div
       onClick={handleClick}
       style={style}
-      className={`absolute w-12 h-14 rounded-none transition-all duration-150 select-none ${
+      className={`absolute w-12 h-14 rounded-lg transition-all duration-150 select-none ${
         isClickable
           ? 'cursor-pointer hover:-translate-y-1 active:translate-y-0 active:scale-95 z-20'
           : 'cursor-not-allowed pointer-events-none'
@@ -39,7 +39,7 @@ export const TileItem: React.FC<TileItemProps> = ({
     >
       {/* 3D Cosmic Hextech Tile Chassis */}
       <div
-        className={`relative w-full h-full rounded-none flex items-center justify-center border-2 transition-all duration-200 ${
+        className={`relative w-full h-full rounded-lg flex items-center justify-center border-2 transition-all duration-200 ${
           isClickable
             ? isHinted
               ? 'bg-black border-yellow-300 shadow-[0_0_20px_rgba(250,204,21,0.9)] ring-2 ring-yellow-400 animate-pulse'
@@ -62,7 +62,7 @@ export const TileItem: React.FC<TileItemProps> = ({
 
         {/* Dimming Layer when covered by higher tiles */}
         {tile.isCovered && (
-          <div className="absolute inset-0 rounded-none bg-slate-950/70 backdrop-blur-[0.5px]" />
+          <div className="absolute inset-0 rounded-lg bg-slate-950/70 backdrop-blur-[0.5px]" />
         )}
       </div>
     </div>

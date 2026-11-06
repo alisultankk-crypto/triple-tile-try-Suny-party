@@ -33,7 +33,7 @@ function constrainPull(point: Point, anchor: Point): Point {
   const dx = point.x - anchor.x;
   const dy = point.y - anchor.y;
   const distance = Math.hypot(dx, dy);
-  const limit = 130;
+  const limit = 175;
   return distance > limit
     ? { x: anchor.x + (dx / distance) * limit, y: anchor.y + (dy / distance) * limit }
     : point;
@@ -176,19 +176,21 @@ export const CatBossChallenge: React.FC<CatBossChallengeProps> = ({ lang, onHit,
       lastFrame = now;
       const time = (now - startTime) / 1000;
       const game = gameRef.current;
-      const anchor = { x: width / 2, y: height - Math.max(110, height * 0.16) };
-      const bossX = width / 2 + Math.sin(time * 0.82) * width * 0.29;
-      const bossY = height * 0.24 + Math.sin(time * 1.6) * 13;
+      const anchor = { x: width / 2, y: height - Math.max(130, height * 0.18) };
+      const bossX = width / 2 + Math.sin(time * 0.28) * width * 0.18;
+      const bossY = height * 0.28 + Math.sin(time * 0.7) * 7;
       const bossScale = Math.min(1, width / 420);
 
       ctx.clearRect(0, 0, width, height);
       ctx.fillStyle = 'rgba(2, 6, 23, 0.93)';
       ctx.fillRect(0, 0, width, height);
       for (let i = 0; i < 54; i++) {
-        const x = (i * 197 + time * (8 + (i % 5) * 3)) % width;
-        const y = (i * 83 + time * (12 + (i % 4) * 5)) % height;
+        const x = (i * 197) % width;
+        const y = (i * 83) % height;
         ctx.fillStyle = `rgba(186, 230, 253, ${0.22 + (i % 5) * 0.1})`;
-        ctx.fillRect(x, y, i % 9 === 0 ? 2 : 1, i % 9 === 0 ? 8 : 3);
+        ctx.beginPath();
+        ctx.arc(x, y, i % 9 === 0 ? 1.6 : 1, 0, Math.PI * 2);
+        ctx.fill();
       }
       drawBoss(ctx, bossX, bossY, bossScale, game.splats);
 
@@ -221,11 +223,11 @@ export const CatBossChallenge: React.FC<CatBossChallengeProps> = ({ lang, onHit,
       if (game.drag && game.remaining > 0) {
         const dx = anchor.x - game.drag.x;
         const dy = anchor.y - game.drag.y;
-        const vx = dx * 5;
-        const vy = dy * 5;
-        for (let t = 0.08; t < 1.8; t += 0.12) {
+        const vx = dx * 7;
+        const vy = dy * 7;
+        for (let t = 0.08; t < 2.4; t += 0.12) {
           const x = anchor.x + vx * t;
-          const y = anchor.y + vy * t + 0.5 * 700 * t * t;
+          const y = anchor.y + vy * t + 0.5 * 520 * t * t;
           if (y > height || x < 0 || x > width) break;
           ctx.globalAlpha = 1 - t / 2;
           ctx.fillStyle = '#fef08a';
@@ -240,7 +242,7 @@ export const CatBossChallenge: React.FC<CatBossChallengeProps> = ({ lang, onHit,
         const ball = game.projectile;
         ball.x += ball.vx * delta;
         ball.y += ball.vy * delta;
-        ball.vy += 700 * delta;
+        ball.vy += 520 * delta;
         ctx.shadowColor = '#38bdf8';
         ctx.shadowBlur = 18;
         ctx.fillStyle = '#38bdf8';
@@ -249,7 +251,7 @@ export const CatBossChallenge: React.FC<CatBossChallengeProps> = ({ lang, onHit,
         ctx.fill();
         ctx.shadowBlur = 0;
 
-        if (Math.hypot(ball.x - bossX, ball.y - bossY) < 70 * bossScale) {
+        if (Math.hypot(ball.x - bossX, ball.y - bossY) < 120 * bossScale) {
           game.projectile = null;
           game.hits++;
           game.splats.push({ x: (Math.random() - 0.5) * 50, y: (Math.random() - 0.5) * 42 });
@@ -295,7 +297,7 @@ export const CatBossChallenge: React.FC<CatBossChallengeProps> = ({ lang, onHit,
     const point = getCanvasPoint(event);
     const anchor = {
       x: event.currentTarget.clientWidth / 2,
-      y: event.currentTarget.clientHeight - Math.max(110, event.currentTarget.clientHeight * 0.16),
+      y: event.currentTarget.clientHeight - Math.max(130, event.currentTarget.clientHeight * 0.18),
     };
     if (Math.hypot(point.x - anchor.x, point.y - anchor.y) > 42) return;
     event.currentTarget.setPointerCapture(event.pointerId);
@@ -305,7 +307,7 @@ export const CatBossChallenge: React.FC<CatBossChallengeProps> = ({ lang, onHit,
   const handlePointerMove = (event: React.PointerEvent<HTMLCanvasElement>) => {
     if (!gameRef.current.drag) return;
     const rect = event.currentTarget.getBoundingClientRect();
-    const anchor = { x: rect.width / 2, y: rect.height - Math.max(110, rect.height * 0.16) };
+    const anchor = { x: rect.width / 2, y: rect.height - Math.max(130, rect.height * 0.18) };
     gameRef.current.drag = constrainPull(getCanvasPoint(event), anchor);
   };
 
@@ -313,13 +315,13 @@ export const CatBossChallenge: React.FC<CatBossChallengeProps> = ({ lang, onHit,
     const game = gameRef.current;
     if (!game.drag) return;
     const rect = event.currentTarget.getBoundingClientRect();
-    const anchor = { x: rect.width / 2, y: rect.height - Math.max(110, rect.height * 0.16) };
+    const anchor = { x: rect.width / 2, y: rect.height - Math.max(130, rect.height * 0.18) };
     const point = constrainPull(getCanvasPoint(event), anchor);
     game.drag = null;
     const dx = anchor.x - point.x;
     const dy = anchor.y - point.y;
     if (Math.hypot(dx, dy) < 18) return;
-    game.projectile = { x: anchor.x, y: anchor.y, vx: dx * 5, vy: dy * 5 };
+    game.projectile = { x: anchor.x, y: anchor.y, vx: dx * 7, vy: dy * 7 };
     game.remaining--;
     setRemainingShots(game.remaining);
     puzzleSounds.playPaintShot();
