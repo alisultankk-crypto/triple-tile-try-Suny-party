@@ -1352,6 +1352,7 @@ export default function App() {
       {isBossChallenge && (
         <CatBossChallenge
           lang={lang}
+          level={level}
           onHit={() => updateDailyChallenges((progress) => ({ ...progress, paintHits: progress.paintHits + 1 }))}
           onComplete={finishLevel}
         />

@@ -91,17 +91,17 @@ export function generateCampaignLevel(level: number): TileItemData[] {
   const safeLevel = Math.max(1, Math.min(MAX_CAMPAIGN_LEVEL, Math.floor(level)));
   const progress = (safeLevel - 1) / (MAX_CAMPAIGN_LEVEL - 1);
   const typeCount = Math.min(CAMPAIGN_TILE_TYPES.length, 12 + Math.floor((safeLevel - 1) / 50) * 2);
-  const totalTriplets = Math.max(typeCount, 12 + Math.ceil(115 * Math.pow(progress, 0.72)));
-  const pool = Array.from(
+  const totalTriplets = Math.max(typeCount, 14 + Math.ceil(120 * Math.pow(progress, 0.72)));
+  const tripletTypes = Array.from(
     { length: totalTriplets },
     (_, i) => CAMPAIGN_TILE_TYPES[i % typeCount]
-  ).flatMap((type) => [type, type, type]);
-
+  );
   const random = createPRNG(safeLevel * 7919 + 104729);
-  for (let i = pool.length - 1; i > 0; i--) {
+  for (let i = tripletTypes.length - 1; i > 0; i--) {
     const j = Math.floor(random() * (i + 1));
-    [pool[i], pool[j]] = [pool[j], pool[i]];
+    [tripletTypes[i], tripletTypes[j]] = [tripletTypes[j], tripletTypes[i]];
   }
+  const pool = tripletTypes.flatMap((type) => [type, type, type]);
 
   const columns = 7;
   const rows = 6;
@@ -156,13 +156,18 @@ export function generateCampaignLevel(level: number): TileItemData[] {
   });
 
   const boardPositions = positions.slice(0, 18 + Math.floor(progress * 24));
-  const blueprints = pool.map((_, index) => {
-    const position = boardPositions[index % boardPositions.length];
-    return {
-      x: position.x,
-      y: position.y,
-      layer: Math.floor(index / boardPositions.length),
-    };
+  const tripletsPerLayer = Math.max(1, Math.floor(boardPositions.length / 3));
+  const blueprints = tripletTypes.flatMap((_, tripletIndex) => {
+    const layer = Math.floor(tripletIndex / tripletsPerLayer);
+    const firstPosition = (tripletIndex % tripletsPerLayer) * 3;
+    return [0, 1, 2].map((offset) => {
+      const position = boardPositions[firstPosition + offset];
+      return {
+        x: position.x,
+        y: position.y,
+        layer,
+      };
+    });
   });
 
   return createTilesFromBlueprints(blueprints, pool, random);

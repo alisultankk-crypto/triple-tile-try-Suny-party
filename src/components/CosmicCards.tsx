@@ -63,7 +63,7 @@ export function getCardMeta(type: TileType): CatMeta {
   return CAT_CARD_METAS[type];
 }
 
-function CatDrawing({ meta, index }: { meta: CatMeta; index: number }) {
+function CatDrawing({ meta, index, coatFill }: { meta: CatMeta; index: number; coatFill: string }) {
   const eyeColor = ['#76e4ff', '#ffd166', '#b5f28c', '#ff91bd', '#c5a5ff', '#fff2d6'][index % 6];
   const patch = index % 2 ? '#f4eee3' : '#272b36';
   const earInner = ['#ee7796', '#e4a4b8', '#bf7d58', '#dbb1e6'][index % 4];
@@ -71,12 +71,13 @@ function CatDrawing({ meta, index }: { meta: CatMeta; index: number }) {
   if (meta.form === 'paw') {
     return (
       <g transform={`rotate(${meta.angle} 32 32)`}>
-        <ellipse cx="32" cy="40" rx="19" ry="15" fill={meta.coat} stroke="#fff" strokeWidth="1.5" />
+        <ellipse cx="32" cy="40" rx="19" ry="15" fill={coatFill} stroke="#fff" strokeWidth="1.5" />
         {[16, 27, 38, 49].map((x, i) => (
-          <ellipse key={x} cx={x} cy={i % 2 ? 17 : 19} rx="6.5" ry="9" fill={meta.coat} stroke="#fff" strokeWidth="1.3" transform={`rotate(${(i - 1.5) * 11} ${x} 19)`} />
+          <ellipse key={x} cx={x} cy={i % 2 ? 17 : 19} rx="6.5" ry="9" fill={coatFill} stroke="#fff" strokeWidth="1.3" transform={`rotate(${(i - 1.5) * 11} ${x} 19)`} />
         ))}
         <path d="M32 32c-7-1-11 5-9 10 1 4 5 5 9 2 4 3 8 2 9-2 2-5-2-10-9-10Z" fill={earInner} />
         {meta.markings % 2 === 0 && <path d="M25 35q7 5 14 0" fill="none" stroke="#fff" strokeWidth="1.5" />}
+        <path d="M17 47q15-9 30 0" fill="none" stroke={patch} strokeOpacity=".7" strokeWidth="2" />
       </g>
     );
   }
@@ -84,11 +85,11 @@ function CatDrawing({ meta, index }: { meta: CatMeta; index: number }) {
   if (meta.form === 'sleeping') {
     return (
       <g transform={`rotate(${meta.angle} 32 35)`}>
-        <ellipse cx="34" cy="42" rx="23" ry="14" fill={meta.coat} stroke="#fff" strokeWidth="1.5" />
-        <path d="M17 45c-8 9 2 15 11 8" fill="none" stroke={meta.coat} strokeWidth="6" strokeLinecap="round" />
+        <ellipse cx="34" cy="42" rx="23" ry="14" fill={coatFill} stroke="#fff" strokeWidth="1.5" />
+        <path d="M17 45c-8 9 2 15 11 8" fill="none" stroke={coatFill} strokeWidth="6" strokeLinecap="round" />
         <path d="M20 45q12-9 27-1" fill="none" stroke={patch} strokeWidth="4" />
-        <circle cx="25" cy="30" r="13" fill={meta.coat} stroke="#fff" strokeWidth="1.5" />
-        <path d="m15 25 1-13q1-4 5 0l6 5m10 8-1-13q-1-4-5 0l-6 5" fill={meta.coat} stroke="#fff" strokeWidth="1.5" strokeLinejoin="round" />
+        <circle cx="25" cy="30" r="13" fill={coatFill} stroke="#fff" strokeWidth="1.5" />
+        <path d="m15 25 1-13q1-4 5 0l6 5m10 8-1-13q-1-4-5 0l-6 5" fill={coatFill} stroke="#fff" strokeWidth="1.5" strokeLinejoin="round" />
         <path d="m17 16 6 4m15-4-6 4" stroke={earInner} strokeWidth="3" />
         <path d="M19 30q4 4 8 0m3 0q4 4 8 0" fill="none" stroke="#292331" strokeWidth="1.6" strokeLinecap="round" />
         <path d="m27 35 3 2 3-2" fill="none" stroke="#854f45" strokeWidth="1.5" />
@@ -101,9 +102,9 @@ function CatDrawing({ meta, index }: { meta: CatMeta; index: number }) {
   if (meta.form === 'profile') {
     return (
       <g transform={`rotate(${meta.angle} 32 34) scale(${index % 2 ? -1 : 1} 1) translate(${index % 2 ? -64 : 0} 0)`}>
-        <path d="M18 45c-7 11 4 15 13 9 3-3 5-7 8-9" fill="none" stroke={meta.coat} strokeWidth="6" strokeLinecap="round" />
-        <ellipse cx="31" cy="47" rx="12" ry="13" fill={meta.coat} stroke="#fff" strokeWidth="1.5" />
-        <path d="M19 32 21 9q1-5 7 0l7 8q12 2 13 14l10 9-11 4q-12 5-22-3-7-5-6-9Z" fill={meta.coat} stroke="#fff" strokeWidth="1.5" strokeLinejoin="round" />
+        <path d="M18 45c-7 11 4 15 13 9 3-3 5-7 8-9" fill="none" stroke={coatFill} strokeWidth="6" strokeLinecap="round" />
+        <ellipse cx="31" cy="47" rx="12" ry="13" fill={coatFill} stroke="#fff" strokeWidth="1.5" />
+        <path d="M19 32 21 9q1-5 7 0l7 8q12 2 13 14l10 9-11 4q-12 5-22-3-7-5-6-9Z" fill={coatFill} stroke="#fff" strokeWidth="1.5" strokeLinejoin="round" />
         <path d="m22 14 3 12 7-8Z" fill={earInner} />
         <ellipse cx="37" cy="29" rx="3.5" ry="5" fill={eyeColor} stroke="#20202a" strokeWidth="1" />
         <circle cx="38" cy="29" r="1.4" fill="#15151c" />
@@ -128,21 +129,43 @@ function CatDrawing({ meta, index }: { meta: CatMeta; index: number }) {
         <>
           <path
             d={index % 2 ? 'M25 51c-9 2-17-1-18-8-1-6 7-7 10-2 3 4 8 3 11 2' : 'M38 52c10 3 18-2 16-8-1-5-8-4-10 1-2 4-6 3-10 1'}
-            fill="none" stroke={meta.coat} strokeWidth="6" strokeLinecap="round"
+            fill="none" stroke={coatFill} strokeWidth="6" strokeLinecap="round"
           />
-          <ellipse cx="32" cy="45" rx={index % 3 === 0 ? 17 : 14} ry="15" fill={meta.coat} stroke="#fff" strokeWidth="1.5" />
-          <ellipse cx="23" cy="56" rx="6" ry="4" fill={meta.coat} />
-          <ellipse cx="41" cy="56" rx="6" ry="4" fill={meta.coat} />
+          <ellipse cx="32" cy="45" rx={index % 3 === 0 ? 17 : 14} ry="15" fill={coatFill} stroke="#fff" strokeWidth="1.5" />
+          <ellipse cx="23" cy="56" rx="6" ry="4" fill={coatFill} />
+          <ellipse cx="41" cy="56" rx="6" ry="4" fill={coatFill} />
           {meta.markings % 2 === 0 && <path d="M22 44q10 6 20 0v7q-10 5-20 0Z" fill={patch} />}
         </>
       )}
-      <path d={facePath} fill={meta.coat} stroke="#fff" strokeWidth="1.6" strokeLinejoin="round" />
+      <path d={facePath} fill={coatFill} stroke="#fff" strokeWidth="1.6" strokeLinejoin="round" />
       <path d={`M18 14 21 27 29 18Z`} fill={earInner} />
       <path d="m46 14-3 13-8-9Z" fill={earInner} />
       {meta.markings % 4 === 0 && <path d="M20 17q8 6 12 0v9q-6 5-12 0Zm24 0q-8 6-12 0v9q6 5 12 0Z" fill={patch} />}
       {meta.markings % 4 === 1 && <ellipse cx={index % 2 ? 24 : 40} cy="33" rx="7" ry="11" fill={patch} />}
       {meta.markings % 4 === 2 && <path d="M17 38q15-9 30 0M19 44q13-7 26 0" fill="none" stroke={patch} strokeWidth="2.5" />}
       {meta.markings % 4 === 3 && <path d="M19 22q13 8 26 0" fill="none" stroke={patch} strokeWidth="4" />}
+      {index % 7 === 0 && (
+        <path d="m20 17 2-9 7 5 3-10 4 10 7-5 2 9Z" fill="#facc15" stroke="#7c4a03" strokeWidth="1" />
+      )}
+      {index % 7 === 1 && (
+        <g fill="#f472b6" stroke="#fff1f2" strokeWidth="1">
+          <path d="M17 19q-10-8-8 1 2 6 10 3Zm2 0q10-8 8 1-2 6-10 3Z" />
+          <circle cx="18" cy="21" r="2" />
+        </g>
+      )}
+      {index % 7 === 2 && <path d="M18 31q14-7 28 0v5q-14-6-28 0Z" fill="#ef4444" stroke="#fff" strokeWidth="1" />}
+      {index % 7 === 3 && (
+        <g fill="none" stroke="#f8fafc" strokeWidth="1.5">
+          <circle cx="24" cy="34" r="7" />
+          <circle cx="40" cy="34" r="7" />
+          <path d="M31 34h2m-14-3-4-2m33 2 4-2" />
+        </g>
+      )}
+      {index % 7 === 4 && <path d="m32 18 2 5 5 .4-3.8 3.2 1.2 5.2-4.4-2.8-4.4 2.8 1.2-5.2-3.8-3.2 5-.4Z" fill="#fde047" />}
+      {index % 7 === 5 && <ellipse cx="32" cy="33" rx="26" ry="24" fill="none" stroke="#67e8f9" strokeWidth="2" strokeOpacity=".8" />}
+      {index % 7 === 6 && full && <path d="M19 47q13 8 26 0l-4 8H23Z" fill="#ef4444" stroke="#fff" strokeWidth="1" />}
+      <ellipse cx="24" cy="41" rx="8" ry="5" fill="#fff1d6" fillOpacity=".76" />
+      <ellipse cx="40" cy="41" rx="8" ry="5" fill="#fff1d6" fillOpacity=".76" />
       <ellipse cx="24" cy="34" rx="4" ry={index % 4 === 1 ? 5 : 3.5} fill={eyeColor} stroke="#161923" strokeWidth="1" />
       <ellipse cx="40" cy="34" rx="4" ry={index % 4 === 1 ? 5 : 3.5} fill={eyeColor} stroke="#161923" strokeWidth="1" />
       <ellipse cx="25" cy="34" rx="1" ry="2.5" fill="#111" />
@@ -171,6 +194,7 @@ export const CosmicCardImage: React.FC<{ type: TileType; isCovered?: boolean }> 
 }) => {
   const index = TYPES.indexOf(type);
   const meta = getCardMeta(type);
+  const gradientId = `cat-coat-${index}`;
   return (
     <svg
       viewBox="0 0 64 64"
@@ -178,7 +202,14 @@ export const CosmicCardImage: React.FC<{ type: TileType; isCovered?: boolean }> 
       aria-label={meta.name}
       className={`h-10 w-10 select-none ${isCovered ? 'opacity-65 grayscale-[0.3]' : ''}`}
     >
-      <CatDrawing meta={meta} index={index} />
+      <defs>
+        <linearGradient id={gradientId} x1="0" y1="0" x2="0.8" y2="1">
+          <stop offset="0" stopColor={`color-mix(in srgb, ${meta.coat} 48%, white)`} />
+          <stop offset="0.52" stopColor={meta.coat} />
+          <stop offset="1" stopColor={`color-mix(in srgb, ${meta.coat} 62%, #171923)`} />
+        </linearGradient>
+      </defs>
+      <CatDrawing meta={meta} index={index} coatFill={`url(#${gradientId})`} />
     </svg>
   );
 };
