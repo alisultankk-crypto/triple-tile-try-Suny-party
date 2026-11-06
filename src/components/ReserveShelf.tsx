@@ -1,6 +1,6 @@
 import React from 'react';
 import { TileItemData, Language } from '../types/game';
-import { CosmicCardImage, getCardMeta } from './CosmicCards';
+import { CosmicCardFrame, CosmicCardImage } from './CosmicCards';
 
 interface ReserveShelfProps {
   tiles: TileItemData[];
@@ -24,19 +24,15 @@ export const ReserveShelf: React.FC<ReserveShelfProps> = ({
       </div>
       <div className="flex items-center gap-2 p-2 rounded-2xl bg-slate-950/85 backdrop-blur-md border-2 border-indigo-500/40 shadow-2xl">
         {tiles.map((tile) => {
-          const meta = getCardMeta(tile.type);
           return (
             <div
               key={tile.id}
               onClick={() => onTileClick(tile)}
-              className="w-12 h-14 sm:w-14 sm:h-16 rounded-lg flex items-center justify-center bg-black border-2 shadow-lg cursor-pointer hover:-translate-y-1 active:translate-y-0 active:scale-95 transition-all"
-              style={{
-                borderColor: meta ? meta.accentColor : '#38bdf8',
-                backgroundColor: '#030303',
-                boxShadow: meta ? `0 0 12px ${meta.glowColor}` : undefined,
-              }}
+              className="w-12 h-14 sm:w-14 sm:h-16 cursor-pointer transition-all hover:-translate-y-1 active:translate-y-0 active:scale-95"
             >
-              <CosmicCardImage type={tile.type} isCovered={false} />
+              <CosmicCardFrame type={tile.type} className="h-full w-full">
+                <CosmicCardImage type={tile.type} isCovered={false} />
+              </CosmicCardFrame>
             </div>
           );
         })}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { TileItemData, Language } from '../types/game';
-import { CosmicCardImage, getCardMeta } from './CosmicCards';
+import { CosmicCardFrame, CosmicCardImage } from './CosmicCards';
 
 interface SlotTrayProps {
   slots: TileItemData[];
@@ -30,27 +30,16 @@ export const SlotTray: React.FC<SlotTrayProps> = ({
         {Array.from({ length: maxSlots }).map((_, idx) => {
           const tile = slots[idx];
           const isMatching = tile && matchingIds.includes(tile.id);
-          const meta = tile ? getCardMeta(tile.type) : null;
 
           return (
             <div
               key={idx}
-              className="relative flex-1 max-w-[58px] aspect-[4/5] rounded-md flex items-center justify-center bg-black border border-cyan-500/20 shadow-inner"
+              className="relative flex-1 max-w-[58px] aspect-[4/5] rounded-[10px] border border-cyan-300/10 bg-gradient-to-b from-slate-900 to-slate-950 p-[2px] shadow-inner"
             >
               {tile && (
-                <div
-                  className={`relative w-full h-full rounded-lg flex items-center justify-center bg-black border-2 shadow-md transform transition-all duration-150 ${
-                    isMatching
-                      ? 'scale-110 bg-amber-400/40 border-yellow-300 shadow-[0_0_20px_rgba(250,204,21,1)] animate-bounce'
-                      : 'scale-100'
-                  }`}
-                  style={{
-                    borderColor: meta ? meta.accentColor : '#38bdf8',
-                    backgroundColor: '#030303',
-                  }}
-                >
+                <CosmicCardFrame type={tile.type} isMatching={isMatching} className={`h-full w-full ${isMatching ? 'scale-110 animate-bounce' : ''}`}>
                   <CosmicCardImage type={tile.type} isCovered={false} />
-                </div>
+                </CosmicCardFrame>
               )}
             </div>
           );

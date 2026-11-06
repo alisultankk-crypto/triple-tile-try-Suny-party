@@ -63,6 +63,56 @@ export function getCardMeta(type: TileType): CatMeta {
   return CAT_CARD_METAS[type];
 }
 
+export const CosmicCardFrame: React.FC<{
+  type: TileType;
+  children: React.ReactNode;
+  className?: string;
+  isCovered?: boolean;
+  isHinted?: boolean;
+  isMatching?: boolean;
+}> = ({
+  type,
+  children,
+  className = '',
+  isCovered = false,
+  isHinted = false,
+  isMatching = false,
+}) => {
+  const meta = getCardMeta(type);
+  const frameColor = isHinted ? '#fde047' : isMatching ? '#fef08a' : meta.accentColor;
+  return (
+    <div
+      className={`relative overflow-hidden rounded-[10px] p-[1.5px] transition-all duration-200 ${className}`}
+      style={{
+        background: `linear-gradient(145deg, color-mix(in srgb, ${frameColor} 92%, white), ${frameColor} 38%, #25324a 74%, color-mix(in srgb, ${frameColor} 74%, white))`,
+        boxShadow: isHinted
+          ? '0 0 18px rgba(250,204,21,.75), inset 0 0 0 1px rgba(255,255,255,.55)'
+          : isMatching
+            ? '0 0 20px rgba(250,204,21,.85)'
+            : `0 5px 0 #02040b, 0 8px 16px color-mix(in srgb, ${meta.accentColor} 36%, transparent)`,
+      }}
+    >
+      <div
+        className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-[8px] border border-white/10"
+        style={{
+          background: `radial-gradient(ellipse at 50% 34%, color-mix(in srgb, ${meta.accentColor} 26%, #182036) 0%, #111827 47%, #080b14 100%)`,
+        }}
+      >
+        <div className="pointer-events-none absolute inset-x-1 top-[3px] h-px bg-gradient-to-r from-transparent via-white/65 to-transparent" />
+        <div className="pointer-events-none absolute left-[4px] top-[4px] h-1 w-1 rounded-full bg-white/80 shadow-[0_0_5px_rgba(255,255,255,.8)]" />
+        <div
+          className="pointer-events-none absolute bottom-[3px] right-[4px] h-1 w-1 rounded-full"
+          style={{ backgroundColor: meta.accentColor, boxShadow: `0 0 6px ${meta.accentColor}` }}
+        />
+        <div className={`transition-transform duration-200 ${isCovered ? 'scale-95 opacity-45 grayscale-[0.2]' : 'drop-shadow-[0_3px_4px_rgba(0,0,0,.6)]'}`}>
+          {children}
+        </div>
+        {isCovered && <div className="absolute inset-0 rounded-[8px] bg-slate-950/60" />}
+      </div>
+    </div>
+  );
+};
+
 function CatDrawing({ meta, index, coatFill }: { meta: CatMeta; index: number; coatFill: string }) {
   const eyeColor = ['#76e4ff', '#ffd166', '#b5f28c', '#ff91bd', '#c5a5ff', '#fff2d6'][index % 6];
   const patch = index % 2 ? '#f4eee3' : '#272b36';
