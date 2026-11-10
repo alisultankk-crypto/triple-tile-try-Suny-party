@@ -1,5 +1,6 @@
 import React from 'react';
 import { MagicEffectType, TileType } from '../types/game';
+import { CHALLENGE_CARD_COLORS, HorrorCardArtwork } from './ChallengeMode';
 
 interface CardMeta {
   name: string;
@@ -18,9 +19,9 @@ const TYPES: TileType[] = [
 ];
 
 const CARD_NAMES = [
-  'Клинок ветра', 'Магический амулет', 'Банка искр', 'Лесная руна', 'Золотой щит', 'Теневой сюрикен',
-  'Медный голем', 'Перчатка грома', 'Ледяной лук', 'Боевой топор', 'Звёздный глобус', 'Призма света',
-  'Часовой механизм', 'Рубиновый кинжал', 'Туманная сфера', 'Падающая звезда', 'Орбитальный ключ', 'Лунный эликсир',
+  'Рунный странник', 'Лунная провидица', 'Искровой механик', 'Моховой хранитель', 'Солнечный страж', 'Масочник теней',
+  'Медный голем', 'Грозовой кулак', 'Ледяной следопыт', 'Багровый кузнец', 'Астральный оракул', 'Призматическая чародейка',
+  'Шестерённый мастер', 'Рубиновая танцовщица', 'Туманная сфера', 'Падающая звезда', 'Орбитальный ключ', 'Лунный эликсир',
   'Серебряная маска', 'Солнечный идол', 'Красный кристалл', 'Кольцо планет', 'Пустотный осколок', 'Астральный фолиант',
   'Шлем странника', 'Ракетный модуль', 'Дальний окуляр', 'Метеоритный молот', 'Корабль в бутылке',
   'Кристалл портала', 'Врата измерений', 'Рунный вездеход', 'Северное сияние', 'Пульсарный жезл',
@@ -35,13 +36,6 @@ const COLORS = [
   '#64cfcb', '#ce71ff', '#f0d477', '#a9dbef', '#ff8b57', '#89cafa', '#f29253',
   '#a2d5ff', '#73e6d2', '#ce8dff', '#9cda6b', '#f48acb', '#f6c55f', '#89aaff',
   '#e88d73', '#8cd5ee', '#bbadff', '#ffbe66', '#78e1be', '#dd83f2', '#f3e18b',
-];
-
-const ITEM_ICONS = [
-  '🗡️', '👁️', '🧪', '🍀', '🛡️', '🏺', '🤖', '🧤', '🏹', '🪓', '🔮', '💎',
-  '⚙️', '🔪', '🌫️', '☄️', '🗝️', '🧴', '🎭', '☀️', '🔴', '🪐', '🕳️', '📜',
-  '🪖', '🚀', '🔭', '🔨', '🚢', '🔷', '🚪', '🛞', '🌌', '🪄', '🏆', '✨',
-  '🌑', '📡', '🐚', '🌺', '🌍', '🗺️',
 ];
 
 const EFFECTS: MagicEffectType[] = ['wind', 'arcane', 'fire', 'frost', 'starlight', 'void'];
@@ -71,6 +65,47 @@ export function getCardMeta(type: TileType): CardMeta {
   return CARD_METAS[type];
 }
 
+function OriginalHeroArtwork({ index, color }: { index: number; color: string }) {
+  const ink = '#252338';
+  const skin = '#ffd8b4';
+  const eyes = <><ellipse cx="27" cy="31" rx="2" ry="3" fill={ink} /><ellipse cx="38" cy="31" rx="2" ry="3" fill={ink} /><path d="M29 39q4 3 8 0" fill="none" stroke="#9e5364" strokeWidth="1.8" strokeLinecap="round" /></>;
+  const bust = <path d="M13 60q2-18 19-18t19 18Z" fill={color} stroke={ink} strokeWidth="3" strokeLinejoin="round" />;
+  let portrait: React.ReactNode;
+
+  switch (index) {
+    case 0:
+      portrait = <><path d="M12 60q2-22 20-22t20 22Z" fill="#39b9aa" stroke={ink} strokeWidth="3" /><path d="M16 33q-3-22 16-25 21 3 17 26l-8 9H23Z" fill="#40506d" stroke={ink} strokeWidth="3" /><ellipse cx="32" cy="31" rx="12" ry="14" fill={skin} stroke={ink} strokeWidth="2.5" />{eyes}<path d="m22 13 10 5 10-7m-13 34 3 8 3-8" fill="none" stroke="#ffe07b" strokeWidth="3" strokeLinecap="round" /></>;
+    case 1:
+      portrait = <><path d="M12 60q2-19 20-19t20 19Z" fill="#617be0" stroke={ink} strokeWidth="3" /><path d="M17 31Q15 9 32 8q18 2 15 23l-5 13H22Z" fill="#263e79" stroke={ink} strokeWidth="3" /><ellipse cx="32" cy="31" rx="11" ry="13" fill="#f3c8b7" stroke={ink} strokeWidth="2.5" />{eyes}<path d="M32 9q0-9 10-7-2 7-10 7Zm-3 3q-10-6-14 1 7 3 14-1Z" fill="#ffdc72" stroke={ink} strokeWidth="2" /><circle cx="32" cy="21" r="3" fill="#9be7f0" /></>;
+    case 2:
+      portrait = <><path d="M15 60V29q0-17 17-17t17 17v31Z" fill="#d58a45" stroke={ink} strokeWidth="3" /><rect x="20" y="21" width="24" height="23" rx="7" fill="#e7c77f" stroke={ink} strokeWidth="3" /><circle cx="27" cy="31" r="5" fill="#9ce8f1" stroke={ink} strokeWidth="2" /><circle cx="38" cy="31" r="5" fill="#9ce8f1" stroke={ink} strokeWidth="2" /><path d="M31 31h3m-4 9h5M20 17l-5-7m29 7 5-7M17 49h30" fill="none" stroke="#fff0a6" strokeWidth="3" strokeLinecap="round" /><circle cx="17" cy="50" r="3" fill="#66e5d4" /><circle cx="47" cy="50" r="3" fill="#66e5d4" /></>;
+    case 3:
+      portrait = <><path d="M11 60q3-20 21-20t21 20Z" fill="#538e58" stroke={ink} strokeWidth="3" /><path d="M18 37q-8-20 8-28 15-8 22 7 8 17-5 24Z" fill="#708e5b" stroke={ink} strokeWidth="3" /><ellipse cx="32" cy="32" rx="11" ry="12" fill="#d7bb8b" stroke={ink} strokeWidth="2.5" />{eyes}<path d="m18 18-7-5 10-1m24 3 8-7-1 13M21 47l-5 6m26-6 6 6" fill="none" stroke="#9cdb67" strokeWidth="4" strokeLinecap="round" /><path d="M26 27q2-3 4 0m7 0q2-3 4 0" fill="none" stroke="#547b43" strokeWidth="2" /></>;
+    case 4:
+      portrait = <><path d="M12 60q2-18 20-18t20 18Z" fill="#d69c36" stroke={ink} strokeWidth="3" /><path d="M17 30 20 14l12-8 12 8 3 16-7 12H24Z" fill="#e8b848" stroke={ink} strokeWidth="3" /><ellipse cx="32" cy="31" rx="10" ry="12" fill={skin} stroke={ink} strokeWidth="2.5" />{eyes}<path d="M32 7V2m-5 9 5-7 5 7m-17 5 8 3 8-3 8 3" fill="none" stroke="#fff2ab" strokeWidth="3" strokeLinecap="round" /><path d="M25 47h14" stroke="#fff0a2" strokeWidth="3" /></>;
+    case 5:
+      portrait = <><path d="M11 60q3-20 21-20t21 20Z" fill="#524771" stroke={ink} strokeWidth="3" /><path d="M15 37Q8 8 32 6q25 2 17 31L39 43 32 34l-8 10Z" fill="#29283d" stroke={ink} strokeWidth="3" /><path d="M20 28q12-9 24 0l-3 12q-9 7-18 0Z" fill="#7562a4" stroke={ink} strokeWidth="2" /><path d="m25 32 4 1m6 0 4-1" stroke="#76e8ee" strokeWidth="3" strokeLinecap="round" /><path d="M19 48 10 55m35-7 9 7" stroke="#b292ed" strokeWidth="3" /></>;
+    case 6:
+      portrait = <><path d="M12 60V31l8-6h24l8 6v29Z" fill="#b27a42" stroke={ink} strokeWidth="3" /><rect x="19" y="14" width="26" height="29" rx="5" fill="#d7a65d" stroke={ink} strokeWidth="3" /><circle cx="26" cy="27" r="3" fill="#7ef0dc" /><circle cx="38" cy="27" r="3" fill="#7ef0dc" /><path d="M27 36h10M16 32h-5m42 0h-5M23 18l3-7h12l3 7" fill="none" stroke="#4a3b3b" strokeWidth="3" strokeLinecap="round" /><circle cx="17" cy="51" r="3" fill="#f4cf67" /><circle cx="47" cy="51" r="3" fill="#f4cf67" /></>;
+    case 7:
+      portrait = <><path d="M13 60q0-20 19-20t19 20Z" fill="#4478bc" stroke={ink} strokeWidth="3" /><path d="M19 34q-3-18 13-22 17 3 14 22l-7 9H25Z" fill="#30456b" stroke={ink} strokeWidth="3" /><ellipse cx="32" cy="31" rx="11" ry="13" fill="#f0c4a6" stroke={ink} strokeWidth="2.5" />{eyes}<path d="M12 45 8 34l9-8 8 8-6 13Zm40 0 4-11-9-8-8 8 6 13Z" fill="#6fe0ed" stroke={ink} strokeWidth="2.5" /><path d="m8 34 5-3m43-3-5 3" stroke="#fff" strokeWidth="2" /></>;
+    case 8:
+      portrait = <><path d="M11 60q3-19 21-19t21 19Z" fill="#6ab7dc" stroke={ink} strokeWidth="3" /><path d="M15 38Q7 17 24 7q17-7 26 12l-6 24-8-7H23Z" fill="#e5f6f7" stroke={ink} strokeWidth="3" /><ellipse cx="32" cy="32" rx="10" ry="12" fill="#efc7b1" stroke={ink} strokeWidth="2.5" />{eyes}<path d="m21 14 6 6m17-10-3 8m-23 5-6 2m39-1 5 3" stroke="#8bdff0" strokeWidth="3" strokeLinecap="round" /><path d="m32 47 2 5 5 1-5 2-2 5-2-5-5-2 5-1Z" fill="#fff" /></>;
+    case 9:
+      portrait = <><path d="M11 60q2-20 21-20t21 20Z" fill="#a6404c" stroke={ink} strokeWidth="3" /><path d="M17 34 13 18l14-11 21 8 2 20-9 8H23Z" fill="#8f3447" stroke={ink} strokeWidth="3" /><ellipse cx="32" cy="32" rx="10" ry="12" fill="#e9b69b" stroke={ink} strokeWidth="2.5" /><path d="m23 29 6 2m6 0 6-2m-10 9 2 2 2-2" stroke={ink} strokeWidth="2.5" strokeLinecap="round" /><path d="m19 18 13 6 14-8m-22 31 8 6 8-6" fill="none" stroke="#f2bc62" strokeWidth="3" /></>;
+    case 10:
+      portrait = <><path d="M11 60q2-19 21-19t21 19Z" fill="#6554b6" stroke={ink} strokeWidth="3" /><path d="M14 28 24 7l7 14L42 4l8 27-9 12H22Z" fill="#453e87" stroke={ink} strokeWidth="3" /><ellipse cx="32" cy="32" rx="10" ry="12" fill="#e8c5bd" stroke={ink} strokeWidth="2.5" />{eyes}<circle cx="49" cy="18" r="8" fill="#64d8eb" stroke="#f6e8aa" strokeWidth="2" /><circle cx="49" cy="18" r="3" fill="#fff" /><path d="M18 19 8 15m41 22 7 3" stroke="#bd9bff" strokeWidth="3" /></>;
+    case 11:
+      portrait = <><path d="M12 60q2-18 20-18t20 18Z" fill="#a153b8" stroke={ink} strokeWidth="3" /><path d="M16 35Q11 7 32 6q21 2 16 29l-7 11H23Z" fill="#6f4a9d" stroke={ink} strokeWidth="3" /><ellipse cx="32" cy="32" rx="10" ry="12" fill="#f0c7ca" stroke={ink} strokeWidth="2.5" />{eyes}<path d="M22 13 32 4l10 9m-19 8h18" fill="none" stroke="#80e7f2" strokeWidth="3" /><path d="m32 44 5 8-5 7-5-7Z" fill="#58d8ed" stroke="#fff" strokeWidth="1.5" /><path d="m20 48-7 7m31-7 7 7" stroke="#f3a5ed" strokeWidth="3" /></>;
+    case 12:
+      portrait = <><path d="M12 60q2-18 20-18t20 18Z" fill="#4a9a91" stroke={ink} strokeWidth="3" /><path d="M17 32Q12 11 31 7q19-1 17 24l-5 15H21Z" fill="#647b78" stroke={ink} strokeWidth="3" /><rect x="20" y="23" width="11" height="9" rx="4" fill="#edcf72" stroke={ink} strokeWidth="2" /><rect x="34" y="23" width="11" height="9" rx="4" fill="#edcf72" stroke={ink} strokeWidth="2" /><path d="M31 27h3m-9-15 6-7 7 7M22 40l-8 8m28-8 8 8" fill="none" stroke="#9de4d0" strokeWidth="3" strokeLinecap="round" /><path d="M26 37q6 4 12 0" fill="none" stroke="#e9bd7a" strokeWidth="2" /></>;
+    default:
+      portrait = <><path d="M11 60q3-19 21-19t21 19Z" fill="#d55773" stroke={ink} strokeWidth="3" /><path d="M15 34Q8 14 26 7q17-7 24 12l-5 25-8-7H23Z" fill="#aa4165" stroke={ink} strokeWidth="3" /><path d="M22 29q10-6 20 0l-2 12q-8 5-16 0Z" fill="#e8977f" stroke={ink} strokeWidth="2" /><path d="m26 34 4 1m4 0 4-1m-8 5 2 2 2-2" stroke={ink} strokeWidth="2" strokeLinecap="round" /><path d="m18 15-8-6m38 8 7-8m-36 37-6 8m36-8 7 8" stroke="#f8cb68" strokeWidth="3" strokeLinecap="round" /><path d="m32 44 4 6-4 7-4-7Z" fill="#73e8e1" stroke="#fff" strokeWidth="1.5" /></>;
+  }
+
+  return <g strokeLinejoin="round" strokeLinecap="round">{bust}{portrait}</g>;
+}
+
 export const CosmicCardFrame: React.FC<{
   type: TileType;
   children: React.ReactNode;
@@ -86,35 +121,31 @@ export const CosmicCardFrame: React.FC<{
   isHinted = false,
   isMatching = false,
 }) => {
-  const meta = getCardMeta(type);
-  const frameColor = isHinted ? '#fde047' : isMatching ? '#fef08a' : meta.accentColor;
-  const palette = ['#354a6a', '#345c4d', '#724532'][meta.variant];
+  const index = TYPES.indexOf(type);
+  const artColor = CHALLENGE_CARD_COLORS[index % CHALLENGE_CARD_COLORS.length];
+  const frameColor = isHinted ? '#fde047' : isMatching ? '#fef08a' : artColor;
   return (
     <div
-      className={`relative overflow-hidden rounded-[13px] p-[2px] transition-all duration-200 ${className}`}
+      className={`relative overflow-hidden rounded-[12px] border border-black/80 p-[1px] transition-all duration-200 ${className}`}
       style={{
-        background: `linear-gradient(145deg, #fff1bd 0%, #d2aa67 12%, ${frameColor} 28%, #443046 62%, #171522 78%, #f5d894 100%)`,
+        background: `linear-gradient(145deg, ${frameColor} 0%, #09090a 34%, #252026 72%, ${frameColor} 100%)`,
         boxShadow: isHinted
           ? '0 0 18px rgba(250,204,21,.75), inset 0 0 0 1px rgba(255,255,255,.55)'
           : isMatching
             ? '0 0 20px rgba(250,204,21,.85)'
-            : `0 4px 0 #080712, 0 8px 17px color-mix(in srgb, ${meta.accentColor} 48%, transparent), inset 0 0 0 1px rgba(255,255,255,.3)`,
+            : `0 4px 0 #020303, 0 7px 14px color-mix(in srgb, ${artColor} 48%, transparent)`,
       }}
     >
       <div
-        className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-[11px] border border-white/20"
+        className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-[10px] border border-white/10"
         style={{
-          background: `radial-gradient(ellipse at 50% 42%, color-mix(in srgb, ${meta.accentColor} 74%, ${palette}) 0%, ${palette} 57%, #252035 100%)`,
+          background: `radial-gradient(ellipse at 50% 42%, color-mix(in srgb, ${artColor} 16%, #101112) 0%, #08090a 72%)`,
         }}
       >
-        <div className="pointer-events-none absolute inset-[4px] rounded-[8px] border border-white/15" />
-        <div className="pointer-events-none absolute inset-x-2 top-[5px] h-px bg-gradient-to-r from-transparent via-white/60 to-transparent" />
-        <div className="pointer-events-none absolute -right-3 -top-3 h-8 w-8 rounded-full bg-white/10 blur-md" />
-        <div className="pointer-events-none absolute -bottom-3 -left-3 h-8 w-8 rounded-full bg-black/25 blur-md" />
-        <div className={isCovered ? 'scale-95 opacity-55 grayscale-[0.15]' : 'drop-shadow-[0_5px_5px_rgba(0,0,0,.62)]'}>
+        <div className="pointer-events-none absolute inset-x-1 top-[3px] z-10 h-px bg-gradient-to-r from-transparent via-white/45 to-transparent" />
+        <div className={isCovered ? 'h-full w-full brightness-[.68] grayscale-[.15]' : 'h-full w-full drop-shadow-[0_2px_5px_rgba(0,0,0,.8)]'}>
           {children}
         </div>
-        {isCovered && <div className="absolute inset-0 rounded-[11px] bg-slate-950/45" />}
       </div>
     </div>
   );
@@ -168,46 +199,24 @@ function RelicArtwork({ meta, index, gradientId }: { meta: CardMeta; index: numb
     <svg viewBox="0 0 64 64" role="img" aria-label={meta.name} className="h-12 w-12 select-none overflow-visible sm:h-[52px] sm:w-[52px]">
       <defs>
         <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#fff8d8" />
-          <stop offset=".2" stopColor={meta.accentColor} />
-          <stop offset=".58" stopColor={meta.accentColor} />
-          <stop offset="1" stopColor="#59405c" />
+          <stop offset="0" stopColor="#fff4c2" />
+          <stop offset=".22" stopColor={meta.accentColor} />
+          <stop offset=".7" stopColor={meta.accentColor} />
+          <stop offset="1" stopColor="#272237" />
         </linearGradient>
-        <linearGradient id={`${gradientId}-scene`} x1="0" y1="0" x2="0.8" y2="1">
-          <stop offset="0" stopColor={meta.variant === 0 ? '#466a8b' : meta.variant === 1 ? '#4b8065' : '#926148'} />
-          <stop offset="1" stopColor={meta.variant === 0 ? '#27324f' : meta.variant === 1 ? '#293f3c' : '#493449'} />
-        </linearGradient>
-        <filter id={`${gradientId}-shadow`} x="-40%" y="-40%" width="180%" height="180%">
-          <feDropShadow dx="0" dy="2" stdDeviation="1.8" floodColor="#090812" floodOpacity=".85" />
-        </filter>
+        <radialGradient id={`${gradientId}-halo`}>
+          <stop offset="0" stopColor={meta.accentColor} stopOpacity=".4" />
+          <stop offset="1" stopColor={meta.accentColor} stopOpacity="0" />
+        </radialGradient>
       </defs>
-      <path d="M32 3 55 18 58 42 39 59 12 51 6 27Z" fill={`url(#${gradientId}-scene)`} stroke="#fff5c9" strokeOpacity=".42" strokeWidth="1.2" />
-      <circle cx="13" cy="15" r="1.4" fill="#fff5c9" />
-      <circle cx="51" cy="49" r="1.1" fill="#fff5c9" />
-      <path d={meta.variant === 0 ? 'M8 42Q32 17 56 41' : meta.variant === 1 ? 'M9 34Q31 10 55 33M13 44Q31 25 51 44' : 'M11 22Q31 44 53 20M9 35Q31 54 55 33'} fill="none" stroke={meta.accentColor} strokeOpacity=".35" strokeWidth="2" />
-      <circle cx="32" cy="32" r="22" fill="none" stroke="#fff1c1" strokeOpacity=".16" strokeWidth=".8" />
+      <circle cx="32" cy="32" r="30" fill={`url(#${gradientId}-halo)`} />
       {sparks.map((spark, sparkIndex) => (
-        <path key={sparkIndex} d={`M${spark.x} ${spark.y - 2}v4m-2-2h4`} stroke={sparkIndex % 2 ? meta.accentColor : '#fff4c2'} strokeOpacity=".9" strokeWidth="1.3" />
+        <path key={sparkIndex} d={`M${spark.x} ${spark.y - 2}v4m-2-2h4`} stroke="#fff4c2" strokeOpacity=".8" strokeWidth="1" />
       ))}
-      <g filter={`url(#${gradientId}-shadow)`} transform={`rotate(${(index * 19) % 19 - 9} 32 32)`}>
-        {meta.variant === 0 && <path d="M32 8 38 24 54 32 38 40 32 56 26 40 10 32 26 24Z" fill={meta.accentColor} fillOpacity=".15" stroke="#fff5c9" strokeOpacity=".38" strokeWidth="1" />}
-        {meta.variant === 1 && <path d="M13 32Q32 7 51 32 32 57 13 32Z" fill="#fff1c1" fillOpacity=".1" stroke={meta.accentColor} strokeOpacity=".75" strokeWidth="1.3" />}
-        {meta.variant === 2 && <><path d="M14 47Q32 14 50 47" fill="none" stroke="#fff5c9" strokeOpacity=".62" strokeWidth="1.4" /><path d="M19 48 32 12 45 48" fill="none" stroke={meta.accentColor} strokeOpacity=".55" strokeWidth="1.2" /></>}
-        <g opacity=".2">{artwork}</g>
-        <circle cx="32" cy="33" r="20" fill="#121522" fillOpacity=".52" stroke="#fff3c6" strokeOpacity=".38" strokeWidth="1.1" />
-        <text
-          x="32"
-          y="46"
-          textAnchor="middle"
-          fontSize="35"
-          style={{ fontFamily: '"Segoe UI Emoji", "Apple Color Emoji", sans-serif', filter: 'drop-shadow(0 2px 3px #000)' }}
-        >
-          {ITEM_ICONS[index]}
-        </text>
-        <path d="M25 25q7-8 14-1" fill="none" stroke="#fff" strokeOpacity=".72" strokeWidth="1.4" strokeLinecap="round" />
-        <circle cx={meta.variant === 1 ? 46 : 18} cy={meta.variant === 2 ? 18 : 46} r="2" fill="#fff4c2" />
+      <g transform={`rotate(${(index * 19) % 19 - 9} 32 32)`}>
+        {index < 14 ? <OriginalHeroArtwork index={index} color={meta.accentColor} /> : artwork}
       </g>
-      <path d="M12 53q20-6 40 0" fill="none" stroke="#fff" strokeOpacity=".27" strokeWidth="1" />
+      <path d="M9 49q23-7 46 0" fill="none" stroke="#fff" strokeOpacity=".18" strokeWidth="1" />
     </svg>
   );
 }
@@ -218,10 +227,9 @@ export const CosmicCardImage: React.FC<{ type: TileType; isCovered?: boolean }> 
 }) => {
   const index = TYPES.indexOf(type);
   const meta = getCardMeta(type);
-  const gradientId = `relic-${index}`;
   return (
-    <div className={isCovered ? 'opacity-65 grayscale-[0.3]' : ''}>
-      <RelicArtwork meta={meta} index={index} gradientId={gradientId} />
+    <div className="h-full w-full">
+      <HorrorCardArtwork index={index} label={meta.name} isCovered={isCovered} />
     </div>
   );
 };

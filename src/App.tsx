@@ -72,6 +72,8 @@ import {
   MEOW_CARD_PRICE,
 } from './components/ShopModal';
 import { CatBossChallenge } from './components/CatBossChallenge';
+import { ChallengeMode } from './components/ChallengeMode';
+import { InstallAppButton } from './components/InstallAppButton';
 import {
   DailyChallengesModal,
   DailyChallengeId,
@@ -179,6 +181,7 @@ export default function App() {
     } catch {}
     return 'ru';
   });
+  const [challengeMode, setChallengeMode] = useState(false);
 
   const t = TRANSLATIONS[lang];
 
@@ -994,8 +997,28 @@ export default function App() {
           ? t.levelHard
           : t.levelMaster;
 
+  if (challengeMode) {
+    return (
+      <ChallengeMode
+        lang={lang}
+        onToggleLang={handleToggleLang}
+        onSelectMode={(selectedMode) => {
+          setChallengeMode(false);
+          setMode(selectedMode);
+        }}
+        onExit={() => setChallengeMode(false)}
+        onOpenDailyReward={() => setShowDailyRewardModal(true)}
+        onOpenDailyChallenges={() => setShowChallenges(true)}
+        onOpenShop={() => setShowShop(true)}
+        onOpenLeaderboard={() => setShowLeaderboard(true)}
+        onOpenHelp={() => setShowHelpModal(true)}
+        gold={gold}
+      />
+    );
+  }
+
   return (
-    <div className="relative h-[100dvh] w-full overflow-hidden bg-[#030712] text-slate-100 flex flex-col justify-between items-center select-none font-sans">
+    <div className="relative h-[100dvh] w-full overflow-hidden bg-black text-slate-100 flex flex-col justify-between items-center select-none font-sans">
       {/* 1. Animated Deep Space Canvas Background */}
       <CosmicBackground />
 
@@ -1234,10 +1257,17 @@ export default function App() {
           >
             {lang === 'ru' ? 'День' : 'Daily'}
           </button>
+          <button
+            onClick={() => setChallengeMode(true)}
+            title={lang === 'ru' ? 'Крипто-испытание' : 'Crypto challenge'}
+            className="rounded-lg border border-cyan-300/40 bg-gradient-to-r from-blue-950 to-emerald-950 px-2 py-1 text-[10px] font-black text-cyan-200 shadow-[0_0_10px_rgba(34,211,238,.15)]"
+          >
+            {lang === 'ru' ? 'Испытание' : 'Challenge'}
+          </button>
           <button onClick={handleToggleLang} title={lang === 'ru' ? 'English' : 'Русский'} className="rounded-lg bg-slate-900 px-2 py-1 text-[10px] font-black text-slate-200">
             {lang === 'ru' ? 'RU' : 'EN'}
           </button>
-          <button onClick={() => setShowShop(true)} title={lang === 'ru' ? 'Магазин золота' : 'Gold shop'} aria-label={lang === 'ru' ? 'Магазин золота' : 'Gold shop'} className="rounded-lg border border-amber-400/40 bg-amber-950/70 p-1.5 text-amber-300">
+          <button onClick={() => setShowShop(true)} title={lang === 'ru' ? 'Магазин золота' : 'Gold shop'} aria-label={lang === 'ru' ? 'Магазин золота' : 'Gold shop'} className="rounded-lg border border-emerald-400/40 bg-gradient-to-br from-blue-950 to-emerald-950 p-1.5 text-emerald-300 shadow-[0_0_10px_rgba(52,211,153,.12)]">
             <Store className="h-4 w-4" />
           </button>
           <button onClick={() => setShowDailyRewardModal(true)} title={t.dailyRewardBtn} aria-label={t.dailyRewardBtn} className="rounded-lg bg-slate-900 p-1.5 text-yellow-300">
@@ -1261,6 +1291,7 @@ export default function App() {
           <button onClick={handleToggleFullscreen} title={t.fullscreen} aria-label={t.fullscreen} className="rounded-lg bg-slate-900 px-2 py-1 text-[10px] font-black text-slate-200">
             ⛶
           </button>
+          <InstallAppButton lang={lang} />
         </div>
 
         {/* Extracted 3-Tile Reserve Shelf */}

@@ -1,0 +1,21 @@
+{
+  "id": "./",
+  "name": "Pirate Party",
+  "short_name": "PirateParty",
+  "description": "Пиратская карточная игра с режимами Кампания, День и Испытание.",
+  "lang": "ru",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#050606",
+  "theme_color": "#050606",
+  "icons": [
+    {
+      "src": "./icons/cosmos-app.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
