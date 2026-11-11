@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "Try Party: COSMOS",
-  "short_name": "COSMOS",
-  "description": "Карточная игра с тремя режимами и хоррор-иллюстрациями.",
+  "name": "Pirate Party",
+  "short_name": "PirateParty",
+  "description": "Пиратская карточная игра с режимами Кампания, День и Испытание.",
   "lang": "ru",
   "start_url": "./",
   "scope": "./",
